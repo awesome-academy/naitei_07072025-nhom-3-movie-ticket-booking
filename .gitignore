@@ -7,9 +7,12 @@ capybara-*.html
 /public/system
 /coverage/
 /spec/tmp
+bin/
+target/
 *.orig
 rerun.txt
 pickle-email-*.html
+.DS_Store
 
 # Ignore all logfiles and tempfiles.
 /log/*
