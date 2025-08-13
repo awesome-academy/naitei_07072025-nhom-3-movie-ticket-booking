@@ -16,4 +16,5 @@ public class AdminController {
         model.addAttribute("ticketsToday", 0);
         return "admin/dashboard";
     }
+
 }
