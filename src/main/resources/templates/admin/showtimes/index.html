@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{_layouts/admin_layout :: layout('Danh sách suất chiếu', ~{::content})}">
+
+<div th:fragment="content">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="btn-group">
+            <a class="btn btn-success" href="/admin/showtimes/new" title="Thêm suất chiếu">+ Thêm suất chiếu</a>
+            <a class="btn btn-outline-secondary" href="/admin/showtimes/export" title="Xuất Excel">Xuất Excel</a>
+        </div>
+    </div>
+
+    <!-- Bộ lọc -->
+    <form method="get" th:action="@{/admin/showtimes}" class="mb-4">
+        <div class="form-row">
+            <div class="col-md-3 mb-2">
+                <input type="text" class="form-control" name="keyword"
+                       placeholder="Tìm theo tên phim"
+                       th:value="${keyword}">
+            </div>
+            <div class="col-md-2 mb-2">
+                <input type="date" class="form-control" name="showDate"
+                       th:value="${showDate}">
+            </div>
+            <div class="col-md-3 mb-2">
+                <input type="text" class="form-control" name="cinemaName"
+                       placeholder="Tên rạp"
+                       th:value="${cinemaName}">
+            </div>
+            <div class="col-md-2 mb-2">
+                <select class="form-control" name="status">
+                    <option value="" th:selected="${status == null}">Tất cả</option>
+                    <option th:value="0" th:selected="${status == 0}">Available</option>
+                    <option th:value="1" th:selected="${status == 1}">Finished</option>
+                    <option th:value="-1" th:selected="${status == -1}">Cancelled</option>
+                </select>
+            </div>
+            <div class="col-md-4 mb-2">
+                <button type="submit" class="btn btn-primary">Lọc</button>
+                <a th:href="@{/admin/showtimes}" class="btn btn-secondary">Reset</a>
+            </div>
+        </div>
+    </form>
+
+    <!-- Danh sách showtime -->
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th style="width: 210px;" >Phim</th>
+            <th>Ngày</th>
+            <th>Bắt đầu</th>
+            <th>Kết thúc</th>
+            <th>Rạp</th>
+            <th>Phòng</th>
+            <th>Giá vé</th>
+            <th>Ghế đã đặt</th>
+            <th>Trạng thái</th>
+            <th style="width: 165px;" >Hành động</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="showtime : ${showtimes}">
+            <td th:text="${showtime.movieName}"></td>
+            <td th:text="${#temporals.format(showtime.date, 'dd/MM/yyyy')}"></td>
+            <td th:text="${#temporals.format(showtime.startTime, 'HH:mm')}"></td>
+            <td th:text="${#temporals.format(showtime.endTime, 'HH:mm')}"></td>
+            <td th:text="${showtime.cinemaName}"></td>
+            <td th:text="${showtime.hallName}"></td>
+            <td th:text="${#numbers.formatDecimal(showtime.price, 0, 'POINT', 0, 'COMMA')}"></td>
+            <td>
+                <span th:text="${showtime.paidSeats}"></span> /
+                <span th:text="${showtime.totalSeats}"></span>
+            </td>
+            <td>
+                <span th:if="${showtime.status == 1}" class="badge badge-warning">Finished</span>
+                <span th:if="${showtime.status == 0}" class="badge badge-success">Available</span>
+                <span th:if="${showtime.status == -1}" class="badge badge-danger">Cancelled</span>
+            </td>
+            <td>
+                <a th:href="@{'/admin/showtimes/' + ${showtime.id}}" class="btn btn-info btn-sm">Xem</a>
+                <a th:href="@{'/admin/showtimes/' + ${showtime.id} + '/edit'}"
+                   class="btn btn-outline-primary btn-sm">Sửa</a>
+                <a th:href="@{'/admin/showtimes/' + ${showtime.id} + '/delete'}"
+                   class="btn btn-outline-danger btn-sm">Xóa</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <!-- Nếu không có -->
+    <div class="alert alert-light text-center" th:if="${showtimes.isEmpty()}">
+        Không tìm thấy suất chiếu
+    </div>
+
+    <!-- Phân trang -->
+    <nav th:if="${totalPages > 1}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/admin/showtimes(page=${currentPage - 1}, keyword=${keyword}, cinemaName=${cinemaName}, status=${status})}">
+                    Trước
+                </a>
+            </li>
+
+            <li class="page-item"
+                th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                th:classappend="${i == currentPage} ? 'active'">
+                <a class="page-link"
+                   th:href="@{/admin/showtimes(page=${i}, keyword=${keyword}, cinemaName=${cinemaName}, status=${status})}"
+                   th:text="${i + 1}"></a>
+            </li>
+
+            <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{/admin/showtimes(page=${currentPage + 1}, keyword=${keyword}, cinemaName=${cinemaName}, status=${status})}">
+                    Sau
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+</div>
+</html>
