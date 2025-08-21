@@ -26,7 +26,7 @@ public class PaymentTransaction {
     @Column(name = "amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING) // Lưu chuỗi: PENDING, SUCCESS, FAILED
     @Column(name = "status", nullable = false)
     private PaymentStatus status;
 

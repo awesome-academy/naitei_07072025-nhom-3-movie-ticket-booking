@@ -4,12 +4,15 @@ import com.naitei.group3.movie_ticket_booking_system.dto.response.RevenueDTO;
 import com.naitei.group3.movie_ticket_booking_system.entity.PaymentTransaction;
 import com.naitei.group3.movie_ticket_booking_system.enums.PaymentStatus;
 import com.naitei.group3.movie_ticket_booking_system.repository.projection.RevenueProjection;
+import com.naitei.group3.movie_ticket_booking_system.entity.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
+
 
 public interface PaymentTransactionRepository extends JpaRepository<PaymentTransaction, Long> {
 
@@ -44,4 +47,6 @@ public interface PaymentTransactionRepository extends JpaRepository<PaymentTrans
     ORDER BY label
     """)
     List<RevenueProjection> getRevenue(@Param("type") String type, @Param("status") PaymentStatus status);
+
+    Optional<PaymentTransaction> findByBooking(Booking booking);
 }
