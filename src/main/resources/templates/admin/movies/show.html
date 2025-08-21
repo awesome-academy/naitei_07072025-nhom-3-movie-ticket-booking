@@ -29,7 +29,7 @@
             <p th:text="${movie.description}"></p>
 
             <div class="d-flex mt-3">
-                <a th:href="@{'/admin/movies/' + ${movie.id} + '/edit'}"
+                <a th:href="@{'/admin/movies/' + ${movie.id} + '/update'}"
                    class="btn btn-outline-primary btn-sm mr-1" title="Sửa (placeholder)">Sửa</a>
                 <a th:href="@{'/admin/movies/' + ${movie.id} + '/delete'}"
                    class="btn btn-outline-danger btn-sm" title="Xóa (placeholder)">Xoá</a>

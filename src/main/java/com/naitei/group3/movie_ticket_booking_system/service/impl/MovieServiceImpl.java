@@ -2,10 +2,14 @@ package com.naitei.group3.movie_ticket_booking_system.service.impl;
 
 import com.naitei.group3.movie_ticket_booking_system.converter.DtoConverter;
 import com.naitei.group3.movie_ticket_booking_system.dto.response.MovieDTO;
+import com.naitei.group3.movie_ticket_booking_system.entity.Genre;
 import com.naitei.group3.movie_ticket_booking_system.exception.ResourceNotFoundException;
 import com.naitei.group3.movie_ticket_booking_system.enums.ShowtimeStatus;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import com.naitei.group3.movie_ticket_booking_system.repository.GenreRepository;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -27,6 +31,7 @@ import java.util.List;
 public class MovieServiceImpl implements MovieService {
 
     private final MovieRepository movieRepository;
+    private final GenreRepository genreRepository;
     private final MessageSource messageSource;
 
     @Override
@@ -46,6 +51,55 @@ public class MovieServiceImpl implements MovieService {
     @Override
     public Page<Movie> getNowShowingMovies(Pageable pageable) {
         return movieRepository.findMoviesByShowtimeStatus(ShowtimeStatus.AVAILABLE, pageable);
+    }
+
+    @Override
+    @Transactional
+    public MovieDTO updateMovie(Long id, MovieDTO dto) {
+        Movie oldMovie = movieRepository.findById(id)
+            .orElseThrow(() -> {
+                String msg = messageSource.getMessage(
+                    "movie.notfound",
+                    new Object[]{id},
+                    LocaleContextHolder.getLocale()
+                );
+                return new ResourceNotFoundException(msg);
+            });
+
+        // cập nhật genres
+        Set<Genre> genres = dto.genres().stream()
+            .map(name -> genreRepository.findByNameIgnoreCase(name)
+                .orElseThrow(() -> {
+                    String msg = messageSource.getMessage(
+                        "genre.notfound",
+                        new Object[]{name},
+                        LocaleContextHolder.getLocale()
+                    );
+                    return new ResourceNotFoundException(msg);
+                })
+            )
+            .collect(Collectors.toSet());
+
+        // dùng builder để tạo movie mới từ dto (giữ nguyên id cũ)
+        Movie movie = Movie.builder()
+            .id(oldMovie.getId()) // giữ nguyên id
+            .name(dto.name())
+            .description(dto.description())
+            .duration(dto.duration())
+            .poster(dto.poster())
+            .releaseDate(dto.releaseDate())
+            .isActive(dto.isActive())
+            .genres(genres)
+            .build();
+
+        movieRepository.save(movie);
+
+        return DtoConverter.convertMovieToDTO(movie);
+    }
+
+    @Override
+    public List<Genre> getAllGenres() {
+        return genreRepository.findAll();
     }
 
     @Override
