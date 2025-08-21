@@ -1,5 +1,6 @@
 package com.naitei.group3.movie_ticket_booking_system.controller.admin;
 
+import com.naitei.group3.movie_ticket_booking_system.repository.GenreRepository;
 import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,6 +42,7 @@ public class MovieController extends BaseAdminController {
     private final ExcelMovieServiceImpl excelService;
     private final MovieService movieService;
 
+    @Autowired
     public MovieController(MessageSource messageSource, ExcelMovieServiceImpl excelService, MovieService movieService) {
         this.messageSource = messageSource;
         this.excelService = excelService;
@@ -126,6 +129,20 @@ public class MovieController extends BaseAdminController {
             return messageSource.getMessage("excel.upload.invalidFormat", null, LocaleContextHolder.getLocale());
         }
         return null;
+    }
+
+    @GetMapping("/{id}/edit")
+    public String showUpdateForm(@PathVariable Long id, Model model) {
+        MovieDTO movie = movieService.getMovieById(id);
+        model.addAttribute("movie", movie);
+        model.addAttribute("allGenres", movieService.getAllGenres()); // ✅ gọi service thay vì repo
+        return getAdminView("movies/update");
+    }
+
+    @PutMapping("/{id}/edit")
+    public String updateMovie(@PathVariable Long id, @ModelAttribute MovieDTO movieDTO) {
+        movieService.updateMovie(id, movieDTO);
+        return "redirect:/admin/movies";
     }
 
     @GetMapping("/{id}/delete")
