@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import com.naitei.group3.movie_ticket_booking_system.entity.Movie;
 import org.springframework.stereotype.Repository;
+
+import java.time.LocalDate;
 import java.util.List;
 
 public interface MovieRepository extends JpaRepository<Movie, Long>, JpaSpecificationExecutor<Movie> {
@@ -37,4 +39,20 @@ public interface MovieRepository extends JpaRepository<Movie, Long>, JpaSpecific
         WHERE s.status = :status
     """)
     Page<Movie> findMoviesByShowtimeStatus(@Param("status") ShowtimeStatus status, Pageable pageable);
+
+    @Query("""
+        SELECT DISTINCT m FROM Movie m
+        LEFT JOIN m.genres g
+        LEFT JOIN m.showtimes s
+        WHERE (:keyword IS NULL OR LOWER(m.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
+            OR LOWER(m.description) LIKE LOWER(CONCAT('%', :keyword, '%')))
+          AND (:genreName IS NULL OR LOWER(g.name) LIKE LOWER(CONCAT('%', :genreName, '%')))
+          AND (:showDate IS NULL OR FUNCTION('DATE', s.startTime) = :showDate)
+    """)
+    Page<Movie> searchMovies(
+            @Param("keyword") String keyword,
+            @Param("genreName") String genreName,
+            @Param("showDate") LocalDate showDate,
+            Pageable pageable
+    );
 }
