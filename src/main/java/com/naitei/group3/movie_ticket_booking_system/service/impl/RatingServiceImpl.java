@@ -12,6 +12,7 @@ import com.naitei.group3.movie_ticket_booking_system.entity.User;
 import com.naitei.group3.movie_ticket_booking_system.enums.BookingStatus;
 import com.naitei.group3.movie_ticket_booking_system.enums.RatingStatus;
 import com.naitei.group3.movie_ticket_booking_system.exception.CannotRateMovieException;
+import com.naitei.group3.movie_ticket_booking_system.exception.RatingNotFoundException;
 import com.naitei.group3.movie_ticket_booking_system.exception.ResourceNotFoundException;
 import com.naitei.group3.movie_ticket_booking_system.repository.BookingRepository;
 import com.naitei.group3.movie_ticket_booking_system.repository.MovieRepository;
@@ -19,6 +20,8 @@ import com.naitei.group3.movie_ticket_booking_system.repository.RatingRepository
 import com.naitei.group3.movie_ticket_booking_system.repository.UserRepository;
 import com.naitei.group3.movie_ticket_booking_system.service.RatingService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -33,6 +36,7 @@ public class RatingServiceImpl implements RatingService {
     private final MovieRepository movieRepository;
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
+    private final MessageSource messageSource;
 
     @Override
     public RatingResponse createOrUpdateRating(RatingRequest request) {
@@ -93,5 +97,22 @@ public class RatingServiceImpl implements RatingService {
         return ratingRepository.findAllByStatus(status).stream()
                 .map(DtoConverter::covertRatingToDTO)
                 .toList();
+    }
+
+    @Override
+    public RatingDTO updateStatus(Long userId, Long movieId, RatingStatus newStatus) {
+        RatingId ratingId = new RatingId(userId, movieId);
+        Rating rating = ratingRepository.findById(ratingId)
+                .orElseThrow(() -> new RatingNotFoundException(
+                        messageSource.getMessage(
+                                "rating.notfound",
+                                new Object[]{userId, movieId},
+                                LocaleContextHolder.getLocale()
+                        )
+                ));
+        rating.setStatus(newStatus);
+
+        Rating updatedRating = ratingRepository.save(rating);
+        return DtoConverter.covertRatingToDTO(updatedRating);
     }
 }

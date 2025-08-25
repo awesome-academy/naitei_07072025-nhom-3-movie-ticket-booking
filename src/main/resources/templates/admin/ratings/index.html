@@ -47,14 +47,21 @@
                         <td th:text="${#temporals.format(r.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
                         <td>
                             <div th:if="${r.status == T(com.naitei.group3.movie_ticket_booking_system.enums.RatingStatus).PENDING}">
-                                <a th:href="@{/admin/ratings/approve(userId=${r.userId}, movieId=${r.movieId})}"
-                                   class="btn btn-success btn-sm mr-1">
-                                    <i class="fa fa-check"></i> <span th:text="#{rating.approve}"></span>
-                                </a>
-                                <a th:href="@{/admin/ratings/reject(userId=${r.userId}, movieId=${r.movieId})}"
-                                   class="btn btn-danger btn-sm">
-                                    <i class="fa fa-times"></i> <span th:text="#{rating.reject}"></span>
-                                </a>
+                                <form th:action="@{/admin/ratings/approve/{userId}/{movieId}(userId=${r.userId}, movieId=${r.movieId})}"
+                                      method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-success btn-sm mr-1"
+                                            th:onclick="|return confirm('#{rating.confirm.approve}');|">
+                                        <i class="fa fa-check"></i> <span th:text="#{rating.approve}"></span>
+                                    </button>
+                                </form>
+
+                                <form th:action="@{/admin/ratings/reject/{userId}/{movieId}(userId=${r.userId}, movieId=${r.movieId})}"
+                                      method="post" style="display:inline;">
+                                    <button type="submit" class="btn btn-danger btn-sm"
+                                            th:onclick="|return confirm('#{rating.confirm.reject}');|">
+                                        <i class="fa fa-times"></i> <span th:text="#{rating.reject}"></span>
+                                    </button>
+                                </form>
                             </div>
                         </td>
                     </tr>
