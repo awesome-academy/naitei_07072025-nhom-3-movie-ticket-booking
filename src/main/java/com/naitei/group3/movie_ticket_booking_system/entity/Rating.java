@@ -1,8 +1,11 @@
 package com.naitei.group3.movie_ticket_booking_system.entity;
 
-
+import com.naitei.group3.movie_ticket_booking_system.enums.RatingStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ratings")
@@ -12,6 +15,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class Rating {
+
     @EmbeddedId
     private RatingId id;
 
@@ -29,9 +33,12 @@ public class Rating {
 
     @Column(columnDefinition = "TEXT")
     private String comment;
-    
 
-    // status: 0 = pending, 1 = approved, 2 = rejected 
+    @Enumerated(EnumType.STRING)  // Lưu enum dạng chuỗi: PENDING, APPROVED, REJECTED
     @Column(nullable = false)
-    private Integer status;
+    private RatingStatus status;
+
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 }

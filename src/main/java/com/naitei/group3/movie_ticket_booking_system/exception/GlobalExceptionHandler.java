@@ -207,4 +207,22 @@ public class GlobalExceptionHandler {
                 getMessage("button.back.home", null)
         );
     }
+
+    @ExceptionHandler(RatingNotFoundException.class)
+    public Object handleRatingNotFound(RatingNotFoundException ex, HttpServletRequest request) {
+        if (isApiRequest(request)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(buildErrorResponse(HttpStatus.NOT_FOUND,
+                            ex.getMessage() != null ? ex.getMessage()
+                                    : getMessage("rating.notfound", null)));
+        }
+        return buildErrorPage(
+                404,
+                getMessage("error.notfound.title", null),
+                ex.getMessage() != null ? ex.getMessage()
+                        : getMessage("rating.notfound", null),
+                "/admin",
+                getMessage("button.back.home", null)
+        );
+    }
 }
