@@ -6,4 +6,5 @@ import com.naitei.group3.movie_ticket_booking_system.enums.RoleType;
 
 public interface UserService {
   User registerUser(RegisterRequestDTO dto, RoleType roleType);
+  void verifyEmail(String token);
 }
