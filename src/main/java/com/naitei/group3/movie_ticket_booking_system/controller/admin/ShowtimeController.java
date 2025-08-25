@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-@Controller
+@Controller("adminShowtimeController")
 @RequiredArgsConstructor
 @RequestMapping("/admin/showtimes")
 public class ShowtimeController extends BaseAdminController {

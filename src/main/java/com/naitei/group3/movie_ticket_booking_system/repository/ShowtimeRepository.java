@@ -29,4 +29,18 @@ public interface ShowtimeRepository extends JpaRepository<Showtime, Long> {
                         @Param("status") ShowtimeStatus status,
                         @Param("showDate") LocalDate showDate,
                         Pageable pageable);
+
+        @Query("""
+                    SELECT s FROM Showtime s
+                    JOIN s.movie m
+                    JOIN s.hall h
+                    JOIN h.cinema c
+                    WHERE (:cinemaId IS NULL OR c.id = :cinemaId)
+                      AND (:movieId IS NULL OR m.id = :movieId)
+                      AND s.status = com.naitei.group3.movie_ticket_booking_system.enums.ShowtimeStatus.AVAILABLE
+                    ORDER BY s.startTime
+                """)
+        Page<Showtime> findShowtimesByCinemaAndMovie(@Param("movieId") Long movieId,
+                                                     @Param("cinemaId") Long  cinemaId,
+                                                     Pageable pageable);
 }
