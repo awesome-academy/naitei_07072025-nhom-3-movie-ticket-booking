@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{_layouts/admin_layout :: layout(#{hall.add}, ~{::content})}">
+
+<div th:fragment="content">
+
+
+  <form th:action="@{'/admin/cinemas/' + ${cinema.id} + '/halls/add'}"
+        th:object="${hallRequest}" method="post">
+
+    <!-- Tên phòng chiếu -->
+    <div class="form-group mb-3">
+      <label th:text="#{hall.name}">Tên phòng</label>
+      <input type="text" th:field="*{hallName}" class="form-control" placeholder="VD: Hall 1"/>
+    </div>
+
+    <!-- Tổng số ghế -->
+    <div class="form-group mb-3">
+      <label th:text="#{hall.totalSeats}">Tổng số ghế</label>
+      <input type="number" th:field="*{totalSeats}" class="form-control" min="1" placeholder="VD: 100"/>
+    </div>
+
+    <!-- Nút Lưu + Hủy -->
+    <button type="submit" class="btn btn-success" th:text="#{button.save}">Lưu</button>
+    <a th:href="@{'/admin/cinemas/' + ${cinema.id}}" class="btn btn-secondary" th:text="#{button.cancel}">Hủy</a>
+  </form>
+</div>
+
+<!-- JS -->
+<script th:src="@{/js/admin/hall/add-hall.js}"></script>
+<script th:inline="javascript">
+  let rowIndex = [[${#lists.size(hallRequest.seatRows)}]];
+</script>
+
+</html>

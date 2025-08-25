@@ -16,10 +16,12 @@
             <!-- Sửa, xóa ttin rạp chiếu -->
             <div class="mt-3">
 
-                <!--    Add hall from excel-->
-                <a th:href="@{'/admin/cinemas/' + ${cinema.id} + '/upload'}"
+                <!--    Add hall-->
+                <!-- Add hall -->
+                <a th:href="@{'/admin/cinemas/' + ${cinema.id} + '/halls/add'}"
                    class="btn btn-success btn-sm mr-2"
-                   th:text="#{button.addHallsFromExcel}"></a>
+                   th:text="#{button.addHalls}"></a>
+
 
                 <!-- edit -->
                 <a th:href="@{'/admin/cinemas/' + ${cinema.id} + '/edit'}"

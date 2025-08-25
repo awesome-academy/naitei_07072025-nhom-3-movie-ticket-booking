@@ -2,6 +2,7 @@ package com.naitei.group3.movie_ticket_booking_system.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
+import java.util.Locale;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -246,4 +247,22 @@ public class GlobalExceptionHandler {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage()));
     }
+
+    @ExceptionHandler(HallAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> handleHallAlreadyExists(
+        HallAlreadyExistsException ex,
+        Locale locale) {
+
+        String errorMessage = messageSource.getMessage(
+            "hall.already.exists",
+            new Object[]{ex.getHallName()},
+            locale
+        );
+
+        Map<String, String> body = new HashMap<>();
+        body.put("error", errorMessage);
+
+        return ResponseEntity.badRequest().body(body);
+    }
+
 }
