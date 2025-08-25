@@ -83,10 +83,9 @@
                 <div class="card-footer d-flex justify-content-between">
                     <a th:href="@{'/admin/movies/' + ${movie.id}}" class="btn btn-danger btn-sm"
                         th:text="#{movie.detail}">Xem phim</a>
-                    <div>
-                        <a th:href="@{'/admin/movies/' + ${movie.id} + '/edit'}"
-                            class="btn btn-outline-primary btn-sm mr-1" th:title="#{movie.edit}"
-                            th:text="#{movie.edit}">Sửa</a>
+                      <div>
+                        <a th:href="@{'/admin/movies/' + ${movie.id} + '/update'}"
+                            class="btn btn-outline-primary btn-sm mr-1" title="Sửa (placeholder)">Sửa</a>
                         <a th:href="@{'/admin/movies/' + ${movie.id} + '/delete'}" class="btn btn-outline-danger btn-sm"
                             th:title="#{movie.delete}" th:text="#{movie.delete}">Xoá</a>
                     </div>

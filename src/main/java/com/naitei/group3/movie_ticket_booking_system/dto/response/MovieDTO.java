@@ -4,6 +4,7 @@ import lombok.Builder;
 
 import java.time.LocalDate;
 import java.util.Set;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Builder
 public record MovieDTO(
@@ -12,6 +13,7 @@ public record MovieDTO(
                 String description,
                 Integer duration,
                 String poster,
+                @DateTimeFormat(pattern = "yyyy-MM-dd")
                 LocalDate releaseDate,
                 Boolean isActive,
                 Set<String> genres) {
