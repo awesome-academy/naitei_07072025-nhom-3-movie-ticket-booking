@@ -1,7 +1,9 @@
 package com.naitei.group3.movie_ticket_booking_system.service.impl;
 
+import com.naitei.group3.movie_ticket_booking_system.converter.DtoConverter;
 import com.naitei.group3.movie_ticket_booking_system.converter.RatingDTOConverter;
 import com.naitei.group3.movie_ticket_booking_system.dto.request.RatingRequest;
+import com.naitei.group3.movie_ticket_booking_system.dto.response.RatingDTO;
 import com.naitei.group3.movie_ticket_booking_system.dto.response.RatingResponse;
 import com.naitei.group3.movie_ticket_booking_system.entity.Movie;
 import com.naitei.group3.movie_ticket_booking_system.entity.Rating;
@@ -84,5 +86,12 @@ public class RatingServiceImpl implements RatingService {
                 .stream()
                 .map(RatingDTOConverter::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<RatingDTO> getRatingsByStatus(RatingStatus status) {
+        return ratingRepository.findAllByStatus(status).stream()
+                .map(DtoConverter::covertRatingToDTO)
+                .toList();
     }
 }

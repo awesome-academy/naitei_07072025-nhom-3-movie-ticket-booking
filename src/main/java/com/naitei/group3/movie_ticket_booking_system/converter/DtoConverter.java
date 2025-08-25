@@ -7,12 +7,7 @@ import com.naitei.group3.movie_ticket_booking_system.dto.response.CinemaDTO;
 import com.naitei.group3.movie_ticket_booking_system.dto.response.MovieDTO;
 import com.naitei.group3.movie_ticket_booking_system.dto.response.SeatDTO;
 import com.naitei.group3.movie_ticket_booking_system.dto.response.ShowtimeDTO;
-import com.naitei.group3.movie_ticket_booking_system.entity.Booking;
-import com.naitei.group3.movie_ticket_booking_system.entity.Cinema;
-import com.naitei.group3.movie_ticket_booking_system.entity.Hall;
-import com.naitei.group3.movie_ticket_booking_system.entity.Movie;
-import com.naitei.group3.movie_ticket_booking_system.entity.Seat;
-import com.naitei.group3.movie_ticket_booking_system.entity.Showtime;
+import com.naitei.group3.movie_ticket_booking_system.entity.*;
 import com.naitei.group3.movie_ticket_booking_system.enums.PaymentStatus;
 
 import java.util.stream.Collectors;
@@ -85,13 +80,13 @@ public class DtoConverter {
         if (seat == null) return null;
 
 
-                return SeatDTO.builder()
-                                .id(seat.getId())
-                                .seatRow(seat.getSeatRow())
-                                .seatColumn(seat.getSeatColumn())
-                                .seatTypeName(seat.getSeatType().getName())
-                                .priceMultiplier(seat.getSeatType().getPriceMultiplier())
-                                .build();
+        return SeatDTO.builder()
+                        .id(seat.getId())
+                        .seatRow(seat.getSeatRow())
+                        .seatColumn(seat.getSeatColumn())
+                        .seatTypeName(seat.getSeatType().getName())
+                        .priceMultiplier(seat.getSeatType().getPriceMultiplier())
+                        .build();
         }
 
         public static BookingHistoryDTO convertBookingToHistoryDTO(Booking booking) {
@@ -125,5 +120,20 @@ public class DtoConverter {
             .totalSeats(request.getTotalSeats())
             .cinema(cinema)
             .build();
+    }
+
+    public static RatingDTO covertRatingToDTO(Rating rating) {
+        if (rating == null) return null;
+
+        return RatingDTO.builder()
+                .userId(rating.getUser().getId())
+                .userName(rating.getUser().getName())
+                .movieId(rating.getMovie().getId())
+                .movieTitle(rating.getMovie().getName())
+                .stars(rating.getStars())
+                .comment(rating.getComment())
+                .createdAt(rating.getCreatedAt())
+                .status(rating.getStatus())
+                .build();
     }
 }
