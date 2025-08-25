@@ -3,6 +3,7 @@ package com.naitei.group3.movie_ticket_booking_system.service.impl;
 import com.naitei.group3.movie_ticket_booking_system.converter.DtoConverter;
 import com.naitei.group3.movie_ticket_booking_system.dto.request.ShowtimeFilterReq;
 import com.naitei.group3.movie_ticket_booking_system.dto.response.ShowtimeDTO;
+import com.naitei.group3.movie_ticket_booking_system.dto.response.SimpleShowtimeDTO;
 import com.naitei.group3.movie_ticket_booking_system.entity.Showtime;
 import com.naitei.group3.movie_ticket_booking_system.enums.BookingStatus;
 import com.naitei.group3.movie_ticket_booking_system.exception.ResourceNotFoundException;
@@ -14,10 +15,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -52,5 +56,11 @@ public class ShowtimeServiceImpl implements ShowtimeService {
                 .orElseThrow(() -> new ResourceNotFoundException(
                         messageUtil.getMessage("error.showtime.notfound", id)));
         return DtoConverter.convertShowtimeToDTO(showtime, this.getNumOfBookedSeats(showtime.getId()));
+    }
+
+    @Override
+    public Page<SimpleShowtimeDTO> getShowtimes(Long cinemaId, Long movieId, Pageable pageable) {
+        return showtimeRepository.findShowtimesByCinemaAndMovie(cinemaId, movieId, pageable)
+                .map(DtoConverter::convertShowtimeToDTO);
     }
 }
