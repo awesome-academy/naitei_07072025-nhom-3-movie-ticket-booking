@@ -81,4 +81,8 @@ public class MovieServiceImpl implements MovieService {
         );
         return movies.map(DtoConverter::convertMovieToDTO);
     }
+
+    public Boolean existsById(Long id) {
+        return movieRepository.existsById(id);
+    }
 }
