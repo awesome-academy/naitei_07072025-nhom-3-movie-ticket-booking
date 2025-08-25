@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{_layouts/admin_layout :: layout('Thống kê doanh thu', ~{::content})}">
+
+<body>
+<div th:fragment="content">
+
+    <div class="stats row">
+        <!-- total revenue -->
+        <div class="col-md-3 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+                         th:text="#{stats.totalRevenue}"></div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800"
+                         th:text="${totalRevenue}"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- success -->
+        <div class="col-md-3 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1"
+                         th:text="#{stats.successTransactions}"></div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800"
+                         th:text="${successTransactions}"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending -->
+        <div class="col-md-3 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1"
+                         th:text="#{stats.pendingTransactions}"></div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800"
+                         th:text="${pendingTransactions}"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- failed -->
+        <div class="col-md-3 mb-4">
+            <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="text-xs font-weight-bold text-danger text-uppercase mb-1"
+                         th:text="#{stats.failedTransactions}"></div>
+                    <div class="h5 mb-0 font-weight-bold text-gray-800"
+                         th:text="${failedTransactions}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        <label for="chartType" th:text="#{revenue.chartType}"></label>
+        <select id="chartType">
+            <option value="daily" th:text="#{revenue.chart.daily}"></option>
+            <option value="monthly" th:text="#{revenue.chart.monthly}"></option>
+            <option value="yearly" th:text="#{revenue.chart.yearly}"></option>
+        </select>
+    </div>
+
+    <div id="charts">
+        <div id="dailyContainer" style="display:none">
+            <canvas id="dailyChart"></canvas>
+        </div>
+        <div id="monthlyContainer" style="display:none">
+            <canvas id="monthlyChart"></canvas>
+        </div>
+        <div id="yearlyContainer" style="display:none">
+            <canvas id="yearlyChart"></canvas>
+        </div>
+    </div>
+
+    <script th:src="@{/js/revenues.js}"></script>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+            const dailyLabels   = [[${dailyLabels}]];
+            const dailyData     = [[${dailyData}]];
+            const monthlyLabels = [[${monthlyLabels}]];
+            const monthlyData   = [[${monthlyData}]];
+            const yearlyLabels  = [[${yearlyLabels}]];
+            const yearlyData    = [[${yearlyData}]];
+
+            initRevenueCharts(dailyLabels, dailyData, monthlyLabels, monthlyData, yearlyLabels, yearlyData);
+        /*]]>*/
+    </script>
+
+</div>
+</body>
+</html>
