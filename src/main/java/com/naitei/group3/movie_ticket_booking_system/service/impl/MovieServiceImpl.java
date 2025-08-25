@@ -70,5 +70,8 @@ public class MovieServiceImpl implements MovieService {
             movieRepository.save(movie);
         }
     }
-}
 
+    public Boolean existsById(Long id) {
+        return movieRepository.existsById(id);
+    }
+}

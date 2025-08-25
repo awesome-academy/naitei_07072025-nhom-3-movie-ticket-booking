@@ -27,7 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
-@Controller
+@Controller("adminCinemaController")
 @RequestMapping("/admin/cinemas")
 @RequiredArgsConstructor
 public class CinemaController extends BaseAdminController {
