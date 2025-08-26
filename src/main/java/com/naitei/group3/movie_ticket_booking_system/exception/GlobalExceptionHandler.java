@@ -207,4 +207,43 @@ public class GlobalExceptionHandler {
                 getMessage("button.back.home", null)
         );
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public Object handleIllegalArgument(IllegalArgumentException ex, HttpServletRequest request) {
+        if (isApiRequest(request)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage()));
+        }
+        return buildErrorPage(
+                400,
+                getMessage("error.badrequest.title", null),
+                ex.getMessage(),
+                "/admin",
+                getMessage("button.back.home", null)
+        );
+    }
+
+    @ExceptionHandler(EmailSendException.class)
+    public ResponseEntity<BaseApiResponse<String>> handleEmailSendException(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidTokenException.class)
+    public Object handleInvalidToken(InvalidTokenException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage()));
+    }
+
+    @ExceptionHandler(ExpiredTokenException.class)
+    public Object handleExpiredToken(ExpiredTokenException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage()));
+    }
+
+    @ExceptionHandler(UsedTokenException.class)
+    public Object handleUsedToken(UsedTokenException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(buildErrorResponse(HttpStatus.BAD_REQUEST, ex.getMessage()));
+    }
 }
