@@ -10,6 +10,19 @@ import java.util.List;
 
 public interface BookingSeatRepository extends JpaRepository<BookingSeat, BookingSeatId> {
 
+        @Query("""
+        SELECT bs.seat.id
+        FROM BookingSeat bs
+        JOIN bs.booking b
+        WHERE b.showtime.id = :showtimeId
+          AND bs.seat.id IN :seatIds
+          AND b.status IN :statuses
+        """)
+        List<Long> findBookedOrHeldSeatIds(
+                @Param("showtimeId") Long showtimeId,
+                @Param("seatIds") List<Long> seatIds,
+                @Param("statuses") List<Integer> statuses);
+
         // Đếm số ghế đã thanh toán của một suất chiếu
         @Query("""
                         SELECT COUNT(bs)

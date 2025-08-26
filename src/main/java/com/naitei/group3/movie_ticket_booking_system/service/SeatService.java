@@ -10,7 +10,7 @@ import java.util.Map;
 
 public interface SeatService {
 
-//    List<SeatDTO> getSeatsByHallId(Long id);
+    List<SeatDTO> getSeatsByShowtimeId(Long showtimeId);
     Map<String, List<SeatDTO>> getSeatsByHallId(Long id);
 
     Seat getSeatById(Long seatId);
