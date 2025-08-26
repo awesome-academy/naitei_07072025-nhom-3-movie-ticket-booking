@@ -119,6 +119,19 @@ public class CinemaController extends BaseAdminController {
         return null;
     }
 
+    @GetMapping("/{id}/edit")
+    public String showUpdateForm(@PathVariable Long id, Model model) {
+        CinemaDTO cinemaDTO = cinemaService.getCinemaById(id);
+        model.addAttribute("cinema", cinemaDTO);
+        return getAdminView("cinemas/edit");
+    }
+
+    @PutMapping("/{id}")
+    public String updateCinema(@PathVariable Long id, @ModelAttribute CinemaDTO request) {
+        cinemaService.updateCinema(id, request);
+        return "redirect:/admin/cinemas";
+    }
+
     @GetMapping("/{id}/delete")
     public String cinemaDetail(@PathVariable Long id, Model model) {
         model.addAttribute("cinema", cinemaService.getCinemaById(id));
