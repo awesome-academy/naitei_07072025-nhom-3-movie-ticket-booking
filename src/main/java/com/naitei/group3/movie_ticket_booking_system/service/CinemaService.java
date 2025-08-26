@@ -12,4 +12,5 @@ public interface CinemaService {
     List<String> getAllCities();
     CinemaDTO getCinemaById(Long id);
     Page<CinemaDTO> getCinemasByMovie(Long movieId, Pageable pageable);
+    void deleteCinema(Long id);
 }

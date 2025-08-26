@@ -1,5 +1,6 @@
 package com.naitei.group3.movie_ticket_booking_system.entity;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import lombok.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -28,4 +29,7 @@ public class Cinema {
     @OneToMany(mappedBy = "cinema", fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Hall> halls = new HashSet<>();
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 }

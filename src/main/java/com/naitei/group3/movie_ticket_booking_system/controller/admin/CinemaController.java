@@ -16,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -117,4 +118,17 @@ public class CinemaController extends BaseAdminController {
         }
         return null;
     }
+
+    @GetMapping("/{id}/delete")
+    public String cinemaDetail(@PathVariable Long id, Model model) {
+        model.addAttribute("cinema", cinemaService.getCinemaById(id));
+        return getAdminView("cinemas/delete");
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCinema(@PathVariable Long id) {
+        cinemaService.deleteCinema(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }
