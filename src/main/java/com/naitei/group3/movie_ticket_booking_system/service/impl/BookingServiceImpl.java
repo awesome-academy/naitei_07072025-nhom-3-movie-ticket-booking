@@ -144,4 +144,40 @@ public class BookingServiceImpl implements BookingService {
     }
 
    
+
+    @Override
+    @Transactional
+    public BaseApiResponse<Void> cancelBooking(Long bookingId, Long userId) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new ResourceNotFoundException("Booking not found"));
+
+        // Chỉ cho phép huỷ vé của chính mình
+        if (!booking.getUser().getId().equals(userId)) {
+            return new BaseApiResponse<>(HttpStatus.FORBIDDEN.value(), "You are not allowed to cancel this booking");
+        }
+
+        // Nếu đã thanh toán, chỉ cho huỷ trước giờ chiếu 60 phút
+        boolean isPaid = booking.getStatus() == BookingStatus.PAID.getValue();
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime showtime = booking.getShowtime().getStartTime();
+        if (isPaid && now.isAfter(showtime.minusMinutes(60))) {
+            return new BaseApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Cannot cancel this booking");
+        }
+
+        // Cập nhật trạng thái booking
+        booking.setStatus(BookingStatus.CANCELLED.getValue());
+
+        // Hoàn điểm nếu đã thanh toán
+        if (isPaid) {
+            User user = booking.getUser();
+            userPointService.addPoints(user, booking.getTotalPrice().intValue());
+        }
+
+
+        bookingRepository.save(booking);
+
+        return new BaseApiResponse<>(HttpStatus.OK.value(), "Booking cancelled successfully");
+    }
+
+
 }

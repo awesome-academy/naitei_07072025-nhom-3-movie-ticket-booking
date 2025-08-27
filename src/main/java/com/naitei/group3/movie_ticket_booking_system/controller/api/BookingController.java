@@ -46,4 +46,17 @@ public class BookingController {
         BaseApiResponse<List<BookingHistoryDTO>> response = bookingService.getBookingHistory(userId);
         return ResponseEntity.status(response.getCode()).body(response);
     }
+    
+    @PatchMapping("/{id}/cancel")
+    public ResponseEntity<BaseApiResponse<Void>> cancelBooking(
+            @PathVariable Long id,
+            Authentication authentication) {
+
+        CustomUserPrincipal principal = (CustomUserPrincipal) authentication.getPrincipal();
+        Long userId = principal.getId();
+
+        BaseApiResponse<Void> response = bookingService.cancelBooking(id, userId);
+        return ResponseEntity.status(response.getCode()).body(response);
+    }
+    
 }

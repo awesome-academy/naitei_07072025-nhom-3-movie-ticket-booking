@@ -20,4 +20,13 @@ public class UserPointServiceImpl implements UserPointService {
         user.setPoint(user.getPoint() - pointsToUse);
         userRepository.save(user);
     }
+
+    @Override
+    public void addPoints(User user, int pointsToAdd) {
+        if (pointsToAdd < 0) {
+            throw new IllegalArgumentException("Points to add must be positive");
+        }
+        user.setPoint(user.getPoint() + pointsToAdd);
+        userRepository.save(user);
+    }
 }
