@@ -1,6 +1,7 @@
 package com.naitei.group3.movie_ticket_booking_system.service.impl;
 
 import com.naitei.group3.movie_ticket_booking_system.dto.request.RegisterRequestDTO;
+import com.naitei.group3.movie_ticket_booking_system.dto.request.UserUpdateRequest;
 import com.naitei.group3.movie_ticket_booking_system.entity.VerificationToken;
 import com.naitei.group3.movie_ticket_booking_system.enums.RoleType;
 import com.naitei.group3.movie_ticket_booking_system.exception.RoleNotFoundException;
@@ -14,6 +15,7 @@ import com.naitei.group3.movie_ticket_booking_system.repository.VerificationToke
 import com.naitei.group3.movie_ticket_booking_system.service.EmailService;
 import com.naitei.group3.movie_ticket_booking_system.utils.MessageUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
@@ -121,5 +124,36 @@ public class UserServiceImpl implements UserService {
 
         verificationToken.setUsed(true);
         tokenRepository.save(verificationToken);
+    }
+
+    @Override
+    public User getProfile(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        messageUtil.getMessage("error.user.notfound")
+                ));
+    }
+
+    @Transactional
+    @Override
+    public User updateProfile(Long userId, UserUpdateRequest req) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        messageUtil.getMessage("error.user.notfound")
+                ));
+
+        updateIfNotNull(req.name(), user::setName);
+        updateIfNotNull(req.phone(), user::setPhone);
+        updateIfNotNull(req.address(), user::setAddress);
+        updateIfNotNull(req.dateOfBirth(), user::setDateOfBirth);
+        updateIfNotNull(req.gender(), user::setGender);
+
+        return user;
+    }
+
+    private <T> void updateIfNotNull(T value, Consumer<T> setter) {
+        if (value != null) {
+            setter.accept(value);
+        }
     }
 }
