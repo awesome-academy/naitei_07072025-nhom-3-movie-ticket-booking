@@ -1,10 +1,7 @@
 package com.naitei.group3.movie_ticket_booking_system.converter;
 
 import com.naitei.group3.movie_ticket_booking_system.dto.request.HallRequestDTO;
-import com.naitei.group3.movie_ticket_booking_system.dto.response.CinemaDTO;
-import com.naitei.group3.movie_ticket_booking_system.dto.response.MovieDTO;
-import com.naitei.group3.movie_ticket_booking_system.dto.response.SeatDTO;
-import com.naitei.group3.movie_ticket_booking_system.dto.response.ShowtimeDTO;
+import com.naitei.group3.movie_ticket_booking_system.dto.response.*;
 import com.naitei.group3.movie_ticket_booking_system.entity.Cinema;
 import com.naitei.group3.movie_ticket_booking_system.entity.Hall;
 import com.naitei.group3.movie_ticket_booking_system.entity.Movie;
@@ -56,6 +53,21 @@ public class DtoConverter {
                 .status(s.getStatus())
                 .movie(s.getMovie())
                 .hall(s.getHall())
+                .build();
+    }
+
+    public static SimpleShowtimeDTO convertShowtimeToDTO(Showtime s) {
+        if (s == null) return null;
+        return SimpleShowtimeDTO.builder()
+                .id(s.getId())
+                .date(s.getStartTime().toLocalDate())
+                .startTime(s.getStartTime().toLocalTime())
+                .endTime(s.getEndTime().toLocalTime())
+                .price(s.getPrice())
+                .status(s.getStatus())
+                .movieName(s.getMovie().getName())
+                .hallId(s.getHall().getId())
+                .hallName(s.getHall().getName())
                 .build();
     }
 
