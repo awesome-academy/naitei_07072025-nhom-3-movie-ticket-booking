@@ -26,3 +26,8 @@ spring.mail.password=
 # custom properties
 app.verification.expire-hours=24
 app.verification.url=http://localhost:8080/api/v1/auth/verify?token=
+# VNPAY configuration
+vnpay.tmnCode=
+vnpay.hashSecret=
+vnpay.payUrl=
+vnpay.returnUrl=

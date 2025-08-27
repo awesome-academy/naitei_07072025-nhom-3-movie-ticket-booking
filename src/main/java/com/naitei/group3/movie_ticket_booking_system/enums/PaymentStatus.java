@@ -1,9 +1,9 @@
 package com.naitei.group3.movie_ticket_booking_system.enums;
 
 public enum PaymentStatus {
-    PENDING(0, "Chờ xử lý"),
-    SUCCESS(1, "Thành công"),
-    FAILED(-1, "Thất bại");
+    PENDING(0, "Pending"),
+    SUCCESS(1, "Success"),
+    FAILED(-1, "Failed");
 
     private final int code;
     private final String description;
