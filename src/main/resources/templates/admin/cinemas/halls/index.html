@@ -4,6 +4,9 @@
 
 <div th:fragment="content">
 
+<!--    Thông báo khi sửa type của ghế thành công-->
+    <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+
     <!-- Thêm ghế từ excel or Xóa phòng -->
     <div class="hall-actions">
         <a th:href="@{'/admin/cinemas/{cinema.id}/halls/{hall.id}' + '/upload'}"
@@ -51,10 +54,20 @@
                 <div class="row-label" th:text="${entry.key}"></div>
 
                 <!-- Các ghế trong hàng -->
-                <div th:each="seat : ${entry.value}"
-                     th:class="'seat ' + ${seat.seatTypeName.toLowerCase()}">
-                    <!-- Hiển thị số ghế -->
-                    <span th:text="${seat.seatColumn}"></span>
+                <div th:each="seat : ${entry.value}" class="seat-wrapper">
+                    <div th:class="'seat ' + ${seat.seatTypeName.toLowerCase()}">
+                        <!-- Hiển thị số ghế -->
+                        <span th:text="${seat.seatColumn}"></span>
+
+                        <!-- Nút sửa -->
+                        <a th:href="@{/admin/cinemas/{cinemaId}/halls/{hallId}/seats/{seatId}/edit(
+                        cinemaId=${cinemaId},
+                        hallId=${hallId},
+                        seatId=${seat.id})}"
+                           class="edit-btn btn btn-warning btn-sm">
+                            ✎
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,4 +39,7 @@ public class Seat {
     @OneToMany(mappedBy = "seat", fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<BookingSeat> bookingSeats = new HashSet<>();
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 }
