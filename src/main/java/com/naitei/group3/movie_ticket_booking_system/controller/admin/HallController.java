@@ -49,6 +49,7 @@ public class HallController extends BaseAdminController {
 
         model.addAttribute("groupedSeats", groupedSeats);
         model.addAttribute("cinemaId", cinemaId);
+        model.addAttribute("hallId", hallId);
         model.addAttribute("seatCount", seatCount);
         model.addAttribute("totalSeats", totalSeats);
 
