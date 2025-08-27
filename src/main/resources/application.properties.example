@@ -31,3 +31,5 @@ vnpay.tmnCode=
 vnpay.hashSecret=
 vnpay.payUrl=
 vnpay.returnUrl=
+
+spring.mvc.hiddenmethod.filter.enabled=true

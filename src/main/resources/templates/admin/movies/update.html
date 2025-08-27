@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{_layouts/admin_layout :: layout(#{movie.edit.title}, ~{::content})}">
+
+<div th:fragment="content">
+
+
+  <form th:action="@{'/admin/movies/' + ${movie.id} + '/edit'}"
+        th:object="${movie}"
+        method="post">
+
+    <input type="hidden" name="_method" value="put"/>
+
+    <!-- Name -->
+    <div class="form-group">
+      <label for="name" th:text="#{movie.name}"></label>
+      <input type="text" id="name" th:field="*{name}" class="form-control">
+    </div>
+
+    <!-- Description -->
+    <div class="form-group">
+      <label for="description" th:text="#{movie.description}"></label>
+      <textarea id="description" th:field="*{description}" class="form-control" rows="3"></textarea>
+    </div>
+
+    <!-- Duration -->
+    <div class="form-group">
+      <label for="duration" th:text="#{movie.duration}"></label>
+      <input type="number" id="duration" th:field="*{duration}" class="form-control" required>
+    </div>
+
+    <!-- Poster -->
+    <div class="form-group">
+      <label for="poster" th:text="#{movie.poster}"></label>
+      <input type="text" id="poster" name="posterFile" th:field="*{poster}" class="form-control" required>
+      <img th:src="@{${movie.poster}}" th:alt="#{movie.poster.preview}"
+           class="img-fluid mt-2 rounded shadow">
+    </div>
+
+    <!-- Release date -->
+    <div class="form-group">
+      <label for="releaseDate" th:text="#{movie.releaseDate}"></label>
+      <input type="date"
+             id="releaseDate"
+             th:field="*{releaseDate}"
+             th:value="${#temporals.format(movie.releaseDate, 'yyyy-MM-dd')}"
+             class="form-control">
+    </div>
+
+    <!-- Genres -->
+    <label for="genres" th:text="#{movie.genres}"></label>
+    <select id="genres" name="genres" multiple="multiple" class="genre">
+      <option th:each="genre : ${allGenres}"
+              th:value="${genre.name}"
+              th:text="${genre.name}"
+              th:selected="${movie.genres.contains(genre.name)}">
+      </option>
+    </select>
+
+    <!-- Active -->
+    <div class="form-group form-check">
+      <input type="checkbox" id="isActive" th:field="*{isActive}" class="form-check-input">
+      <label class="form-check-label" for="isActive" th:text="#{movie.active}"></label>
+    </div>
+
+    <!-- Buttons -->
+    <div class="d-flex">
+      <button type="submit" class="btn btn-primary mr-2" th:text="#{movie.save}"></button>
+      <a th:href="@{/admin/movies}" class="btn btn-secondary" th:text="#{movie.back}"></a>
+    </div>
+  </form>
+
+  <div th:fragment="scripts">
+    <script th:src="@{/js/genre.js}"></script>
+  </div>
+</div>
+</html>
