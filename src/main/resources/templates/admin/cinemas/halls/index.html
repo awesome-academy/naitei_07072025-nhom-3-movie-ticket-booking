@@ -9,7 +9,7 @@
 
     <!-- Thêm ghế từ excel or Xóa phòng -->
     <div class="hall-actions">
-        <a th:href="@{'/admin/cinemas/{cinema.id}/halls/{hall.id}' + '/upload'}"
+        <a th:href="@{/admin/cinemas/{cinemaId}/halls/{hallId}/seats/add(cinemaId=${cinemaId}, hallId=${hallId})}"
            class="btn btn-success btn-sm mr-2"
            th:text="#{button.addSeatsFromExcel}"></a>
 

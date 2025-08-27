@@ -28,6 +28,9 @@ public class Hall {
     @Column(name = "total_seats")
     private Integer totalSeats;
 
+    @Column(name = "max_seats_per_row")
+    private Integer maxSeatsPerRow;
+
     @OneToMany(mappedBy = "hall", fetch = FetchType.LAZY)
     @JsonIgnore
     private Set<Seat> seats = new HashSet<>();

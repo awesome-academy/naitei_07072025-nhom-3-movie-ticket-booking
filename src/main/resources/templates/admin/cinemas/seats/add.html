@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{_layouts/admin_layout :: layout(#{seat.add.title}, ~{::content})}">
+
+<div th:fragment="content" class="container mt-4">
+
+    <!-- Hiển thị thông báo thành công -->
+    <div th:if="${successMessage}" class="alert alert-success" role="alert">
+        <span th:text="${successMessage}"></span>
+    </div>
+
+    <h2 class="mb-4" th:text="#{seat.add.heading}">Lựa chọn thêm ghế</h2>
+
+    <form th:action="@{/admin/cinemas/{cinemaId}/halls/{hallId}/seats/add(cinemaId=${cinemaId}, hallId=${hallId})}"
+          th:object="${addSeatRequest}" method="post">
+
+        <!-- Row -->
+        <div class="mb-3">
+            <label for="row" class="form-label" th:text="#{seat.row}">Hàng ghế</label>
+            <input type="text" class="form-control" id="row" th:field="*{row}"
+                   th:placeholder="#{seat.row.placeholder}" required>
+        </div>
+
+        <!-- Số lượng ghế add thêm -->
+        <div class="mb-3">
+            <label for="quantity" class="form-label" th:text="#{seat.quantity}">Số lượng ghế</label>
+            <input type="number" class="form-control" id="quantity" th:field="*{quantity}" min="1" required>
+        </div>
+
+        <!-- Loại ghế -->
+        <div class="mb-3">
+            <label for="seatType" class="form-label" th:text="#{seat.type}">Loại ghế</label>
+            <select class="form-select" id="seatType" th:field="*{seatTypeId}" required>
+                <option value="" disabled selected th:text="#{seat.type.select}">-- Chọn loại ghế --</option>
+                <option th:each="type : ${seatTypes}"
+                        th:value="${type.id}"
+                        th:text="${type.name}">
+                </option>
+            </select>
+        </div>
+
+        <!-- submit -->
+        <div class="d-flex justify-content-between mt-4">
+            <a th:href="@{/admin/cinemas/{cinemaId}/halls/{hallId}(cinemaId=${cinemaId}, hallId=${hallId})}"
+               class="btn btn-secondary" th:text="#{button.back}">Quay lại</a>
+            <button type="submit" class="btn btn-primary" th:text="#{button.addSeats}">Thêm ghế</button>
+        </div>
+    </form>
+
+</div>
+</html>

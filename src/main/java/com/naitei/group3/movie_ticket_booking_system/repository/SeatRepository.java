@@ -17,4 +17,6 @@ public interface SeatRepository extends JpaRepository<Seat, Long> {
     List<Seat> findAllByHallId(Long hallId);
 
     boolean existsByHallIdAndSeatRowAndSeatColumn(Long hallId, String seatRow, String seatColumn);
+    @Query("SELECT s.seatColumn FROM Seat s WHERE s.hall.id = :hallId AND s.seatRow = :row")
+    List<String> findColumnsByHallIdAndRow(Long hallId, String row);
 }

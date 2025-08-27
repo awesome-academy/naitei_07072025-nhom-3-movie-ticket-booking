@@ -3,9 +3,11 @@ package com.naitei.group3.movie_ticket_booking_system.service.impl;
 import com.naitei.group3.movie_ticket_booking_system.converter.DtoConverter;
 import com.naitei.group3.movie_ticket_booking_system.dto.request.SeatEditRequest;
 import com.naitei.group3.movie_ticket_booking_system.dto.response.SeatDTO;
+import com.naitei.group3.movie_ticket_booking_system.entity.Hall;
 import com.naitei.group3.movie_ticket_booking_system.entity.Seat;
 import com.naitei.group3.movie_ticket_booking_system.entity.SeatType;
 import com.naitei.group3.movie_ticket_booking_system.exception.ResourceNotFoundException;
+import com.naitei.group3.movie_ticket_booking_system.repository.HallRepository;
 import com.naitei.group3.movie_ticket_booking_system.repository.SeatRepository;
 import com.naitei.group3.movie_ticket_booking_system.repository.SeatTypeRepository;
 import com.naitei.group3.movie_ticket_booking_system.service.SeatService;
@@ -24,6 +26,7 @@ public class SeatServiceImpl implements SeatService {
 
     private final SeatRepository seatRepository;
     private final SeatTypeRepository seatTypeRepository;
+    private final HallRepository hallRepository;
     private final MessageSource messageSource;
 
     @Override
@@ -88,5 +91,51 @@ public class SeatServiceImpl implements SeatService {
         }
 
         return seatRepository.save(seat);
+    }
+
+    @Override
+    @Transactional
+    public String addSeatsToHall(Long hallId, String row, int quantity, Long seatTypeId, Locale locale) {
+
+        // Hàng nhập vào phải in hoa
+        row = row.toUpperCase();
+
+        Hall hall = hallRepository.findById(hallId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        messageSource.getMessage("hall.notfound", null, locale)));
+
+        SeatType seatType = seatTypeRepository.findById(seatTypeId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        messageSource.getMessage("seattype.notfound", null, locale)));
+
+        // Lấy ra danh sách cột hiện có trong row
+        List<String> existingColumns = seatRepository.findColumnsByHallIdAndRow(hallId, row);
+        int maxColumn = 0;
+        for (String col : existingColumns) {
+            try {
+                int num = Integer.parseInt(col.substring(1));   // Tìm số ghế lớn nhất trong hàng (ví dụ A5 -> 5)
+                if (num > maxColumn) maxColumn = num;
+            } catch (NumberFormatException ignored) {}
+        }
+
+        // số ghế add thêm ko thể vượt quá max seat của mỗi hàng
+        int maxSeatsPerRow = hall.getMaxSeatsPerRow();
+        if (maxColumn + quantity > maxSeatsPerRow) {
+            quantity = maxSeatsPerRow - maxColumn;
+        }
+
+        List<Seat> newSeats = new ArrayList<>();
+        for (int i = 1; i <= quantity; i++) {
+            int colNumber = maxColumn + i;
+            Seat seat = new Seat();
+            seat.setHall(hall);
+            seat.setSeatRow(row);
+            seat.setSeatColumn(row + colNumber);
+            seat.setSeatType(seatType);
+            newSeats.add(seat);
+        }
+        seatRepository.saveAll(newSeats);
+
+        return messageSource.getMessage("seat.add.success", new Object[]{newSeats.size()}, locale);
     }
 }
