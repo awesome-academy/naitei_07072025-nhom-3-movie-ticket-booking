@@ -14,4 +14,5 @@ public interface MovieService {
     Page<Movie> getNowShowingMovies(Pageable pageable);
     void delete(Long id);
     Page<MovieDTO> searchMovies(MovieSearchApiRequest req, Pageable pageable);
+    Boolean existsById(Long id);
 }
