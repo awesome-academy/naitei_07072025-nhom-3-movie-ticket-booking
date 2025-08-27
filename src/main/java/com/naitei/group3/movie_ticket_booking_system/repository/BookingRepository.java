@@ -12,4 +12,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findByStatusAndExpiresAtBefore(int i, LocalDateTime time);
 
 	List<Booking> findByUser_IdOrderByShowtime_StartTimeDesc(Long userId);
-}
+    boolean existsByUser_IdAndShowtime_Movie_IdAndStatusAndShowtime_EndTimeBefore(
+            Long userId,
+            Long movieId,
+            Integer status,
+            LocalDateTime now);
+    }
+
