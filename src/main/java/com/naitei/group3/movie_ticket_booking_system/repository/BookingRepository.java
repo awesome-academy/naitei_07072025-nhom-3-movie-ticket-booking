@@ -11,4 +11,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByStatusAndExpiresAtBefore(int i, LocalDateTime time);
 
+	List<Booking> findByUser_IdOrderByShowtime_StartTimeDesc(Long userId);
 }

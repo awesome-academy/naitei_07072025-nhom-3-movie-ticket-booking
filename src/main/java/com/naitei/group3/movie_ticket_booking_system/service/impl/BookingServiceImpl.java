@@ -1,8 +1,10 @@
 package com.naitei.group3.movie_ticket_booking_system.service.impl;
 
+import com.naitei.group3.movie_ticket_booking_system.converter.DtoConverter;
 import com.naitei.group3.movie_ticket_booking_system.dto.request.BookingRequestDTO;
 import com.naitei.group3.movie_ticket_booking_system.dto.response.BaseApiResponse;
 import com.naitei.group3.movie_ticket_booking_system.dto.response.BookingDTO;
+import com.naitei.group3.movie_ticket_booking_system.dto.response.BookingHistoryDTO;
 import com.naitei.group3.movie_ticket_booking_system.entity.*;
 import com.naitei.group3.movie_ticket_booking_system.enums.BookingStatus;
 import com.naitei.group3.movie_ticket_booking_system.exception.*;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -30,40 +33,31 @@ public class BookingServiceImpl implements BookingService {
     private final UserRepository userRepository;
     private final UserPointService userPointService;
 
-    /**
-     * Tạo booking mới
-     */
-    @Override
     @Transactional
+    @Override
     public BaseApiResponse<BookingDTO> createBooking(Long userId, BookingRequestDTO request) {
-        // Lấy thông tin suất chiếu
         Showtime showtime = showtimeRepository.findById(request.showtimeId())
                 .orElseThrow(() -> new ResourceNotFoundException("Showtime not found"));
 
         List<Seat> seats = seatRepository.findAllById(request.seatIds());
 
-        // Kiểm tra ghế có đang bị giữ/đặt không
         boolean isTaken = bookingSeatRepository.existsBookedOrHeldSeats(
                 request.showtimeId(),
                 request.seatIds(),
-                List.of(BookingStatus.PENDING.getValue(), BookingStatus.PAID.getValue()));
+                List.of(BookingStatus.PENDING.getValue(), BookingStatus.PAID.getValue())
+        );
         if (isTaken) {
             throw new SeatAlreadyBookedException("One or more seats are already booked or held.");
         }
 
-        // Tính tổng tiền
         BigDecimal totalPrice = seats.stream()
                 .map(seat -> showtime.getPrice().multiply(seat.getSeatType().getPriceMultiplier()))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        // Trừ điểm
         BigDecimal pointsToUseBD = BigDecimal.valueOf(request.pointsToUse());
         totalPrice = totalPrice.subtract(pointsToUseBD);
-        if (totalPrice.compareTo(BigDecimal.ZERO) < 0) {
-            totalPrice = BigDecimal.ZERO;
-        }
+        if (totalPrice.compareTo(BigDecimal.ZERO) < 0) totalPrice = BigDecimal.ZERO;
 
-        // Lấy user và trừ điểm
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
         if (request.pointsToUse() > user.getPoint()) {
@@ -71,7 +65,6 @@ public class BookingServiceImpl implements BookingService {
         }
         userPointService.deductPoints(user, request.pointsToUse());
 
-        // Tạo booking trước để có ID
         Booking booking = Booking.builder()
                 .user(user)
                 .showtime(showtime)
@@ -82,7 +75,6 @@ public class BookingServiceImpl implements BookingService {
                 .build();
         Booking savedBooking = bookingRepository.saveAndFlush(booking);
 
-        // Tạo các BookingSeat
         Set<BookingSeat> bookingSeats = new HashSet<>();
         for (Seat seat : seats) {
             BookingSeatId id = new BookingSeatId(savedBooking.getId(), seat.getId());
@@ -95,7 +87,6 @@ public class BookingServiceImpl implements BookingService {
         savedBooking.setBookingSeats(bookingSeats);
         bookingRepository.save(savedBooking);
 
-        // Map sang DTO
         BookingDTO dto = new BookingDTO(
                 savedBooking.getId(),
                 savedBooking.getUser().getId(),
@@ -103,41 +94,54 @@ public class BookingServiceImpl implements BookingService {
                 savedBooking.getTotalPrice(),
                 savedBooking.getStatus()
         );
+
         return new BaseApiResponse<>(HttpStatus.OK.value(), "Booking created successfully", dto);
     }
 
-    /**
-     * Dọn dẹp các booking hết hạn
-     */
-    @Override
-    @Scheduled(fixedRate = 60000) // mỗi 60s chạy 1 lần
+    @Scheduled(fixedRate = 60000)
     @Transactional
+    @Override
     public void releaseExpiredBookings() {
         List<Booking> expiredBookings = bookingRepository.findByStatusAndExpiresAtBefore(
-                BookingStatus.PENDING.getValue(), LocalDateTime.now());
+                BookingStatus.PENDING.getValue(), LocalDateTime.now()
+        );
         for (Booking booking : expiredBookings) {
             booking.setStatus(BookingStatus.CANCELLED.getValue());
-            // KHÔNG hoàn điểm cho user nữa
         }
         bookingRepository.saveAll(expiredBookings);
     }
 
-    /**
-     * Lấy booking theo ID
-     */
+    @Override
+    public BaseApiResponse<List<BookingHistoryDTO>> getBookingHistory(Long userId) {
+        List<Booking> bookings = bookingRepository.findByUser_IdOrderByShowtime_StartTimeDesc(userId);
+
+        List<BookingHistoryDTO> bookingHistory = bookings.stream()
+                .map(DtoConverter::convertBookingToHistoryDTO)
+                .collect(Collectors.toList());
+
+        return new BaseApiResponse<>(
+                HttpStatus.OK.value(),
+                "Booking history fetched successfully",
+                bookingHistory
+        );
+    }
+
     @Override
     public BaseApiResponse<BookingDTO> getBookingById(Long id) {
         return bookingRepository.findById(id)
-                .map(booking -> {
-                    BookingDTO dto = new BookingDTO(
-                            booking.getId(),
-                            booking.getUser().getId(),
-                            booking.getShowtime().getId(),
-                            booking.getTotalPrice(),
-                            booking.getStatus()
-                    );
-                    return new BaseApiResponse<>(HttpStatus.OK.value(), "Success", dto);
-                })
+                .map(booking -> new BaseApiResponse<>(
+                        HttpStatus.OK.value(),
+                        "Success",
+                        new BookingDTO(
+                                booking.getId(),
+                                booking.getUser().getId(),
+                                booking.getShowtime().getId(),
+                                booking.getTotalPrice(),
+                                booking.getStatus()
+                        )
+                ))
                 .orElseGet(() -> new BaseApiResponse<>(HttpStatus.NOT_FOUND.value(), "Booking not found"));
     }
+
+   
 }
