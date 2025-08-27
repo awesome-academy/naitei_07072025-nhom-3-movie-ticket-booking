@@ -33,3 +33,5 @@ vnpay.payUrl=
 vnpay.returnUrl=
 
 spring.mvc.hiddenmethod.filter.enabled=true
+
+app.reset.password.url:http://localhost:8080/api/auth/reset-password?token=

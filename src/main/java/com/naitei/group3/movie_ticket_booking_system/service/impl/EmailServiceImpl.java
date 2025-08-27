@@ -26,30 +26,59 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public void sendVerificationEmail(String to, String link) {
-        try {
-            // context để inject biến vào template
-            Context context = new Context();
-            context.setVariable("VERIFICATION_LINK", link);
-            context.setVariable("USER_EMAIL", to);
+        Context context = new Context();
+        context.setVariable("VERIFICATION_LINK", link);
+        context.setVariable("USER_EMAIL", to);
 
+        sendEmail(
+                to,
+                messageUtil.getMessage("email.verification.subject"),
+                "email/verification-email",
+                context
+        );
+    }
+
+    @Override
+    public void sendPasswordResetEmail(String to, String link) {
+        Context context = new Context();
+        context.setVariable("RESET_PASSWORD_LINK", link);
+        context.setVariable("USER_EMAIL", to);
+
+        sendEmail(
+                to,
+                messageUtil.getMessage("email.change.password.subject"),
+                "email/reset-password-email",
+                context
+        );
+    }
+
+    private void sendEmail(String to, String subject, String templateBase, Context context) {
+        try {
+            // pick language
             Locale locale = LocaleContextHolder.getLocale();
             String lang = locale.getLanguage().equalsIgnoreCase("vi") ? "VI" : "EN";
 
-            String templateFile = "email/verification-email_" + lang;
+            // template file
+            String templateFile = templateBase + "_" + lang;
 
+            // render template
             String htmlContent = templateEngine.process(templateFile, context);
 
+            // build message
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
             helper.setTo(to);
-            helper.setSubject(messageUtil.getMessage("email.verification.subject"));
+            helper.setSubject(subject);
             helper.setText(htmlContent, true);
 
-            FileSystemResource res = new FileSystemResource(new File("src/main/resources/static/images/logo.png"));
+            FileSystemResource res = new FileSystemResource(
+                    new File("src/main/resources/static/images/logo.png")
+            );
             helper.addInline("logoImage", res);
 
             mailSender.send(message);
+
         } catch (MessagingException e) {
             throw new EmailSendException(messageUtil.getMessage("email.send.fail"));
         }

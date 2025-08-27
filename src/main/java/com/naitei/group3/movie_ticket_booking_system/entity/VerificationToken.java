@@ -2,6 +2,7 @@ package com.naitei.group3.movie_ticket_booking_system.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -25,4 +26,7 @@ public class VerificationToken {
     private LocalDateTime expiresAt;
 
     private Boolean used = false;
+
+    private String type;
+    private String extraValue; //save encode password
 }
