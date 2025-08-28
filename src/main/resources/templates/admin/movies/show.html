@@ -17,7 +17,7 @@
         <!-- Thông tin -->
         <div class="col-md-8">
             <p><strong>Thời lượng:</strong> <span th:text="${movie.duration} + ' phút'"></span></p>
-            <p><strong>Ngày chiếu:</strong> <span th:text="${#temporals.format(movie.releaseDate, 'dd/MM/yyyy')}"></span></p>
+            <p><strong>Ngày công chiếu:</strong> <span th:text="${#temporals.format(movie.releaseDate, 'dd/MM/yyyy')}"></span></p>
             <p><strong>Thể loại:</strong>
                 <span class="badge badge-info mr-1" th:each="g : ${movie.genres}" th:text="${g}"></span>
             </p>

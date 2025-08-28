@@ -63,7 +63,7 @@
                         <span th:text="${movie.duration} + ' ' + #{movie.duration.unit}"></span>
                     </p>
                     <p class="mb-1">
-                        <strong th:text="#{movie.releaseDate}">Ngày chiếu:</strong>
+                        <strong th:text="#{movie.releaseDate}">Ngày công chiếu:</strong>
                         <span
                             th:text="${movie.releaseDate != null ? #temporals.format(movie.releaseDate, 'dd/MM/yyyy') : ''}"></span>
                     </p>

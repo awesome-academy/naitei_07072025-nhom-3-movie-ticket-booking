@@ -20,7 +20,7 @@ public class MovieFilterReq {
     private int page = 0;
 
     @Min(1) @Max(100)
-    private int size = 10;
+    private int size = 12;
 
     public void setKeyword(String keyword) {
         this.keyword = emptyToNull(keyword);
