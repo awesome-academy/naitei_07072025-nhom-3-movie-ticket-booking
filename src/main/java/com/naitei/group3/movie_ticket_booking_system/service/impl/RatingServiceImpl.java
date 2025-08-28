@@ -66,6 +66,7 @@ public class RatingServiceImpl implements RatingService {
         rating.setStars(request.getStars());
         rating.setComment(request.getComment());
         rating.setStatus(RatingStatus.PENDING);
+        rating.setCreatedAt(LocalDateTime.now());
 
         ratingRepository.save(rating);
 

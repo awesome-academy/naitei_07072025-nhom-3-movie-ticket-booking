@@ -152,9 +152,15 @@ public class ExcelShowtimeHelper {
         showtime.setStartTime(startTime);
         showtime.setEndTime(endTime);
         showtime.setPrice(price);
-        ShowtimeStatus showtimeStatus = ShowtimeStatus.AVAILABLE;
+        ShowtimeStatus showtimeStatus = ShowtimeStatus.AVAILABLE; // default
         if (status != null) {
-            showtimeStatus = ShowtimeStatus.fromValue(status);
+            try {
+                showtimeStatus = ShowtimeStatus.fromValue(status);
+            } catch (IllegalArgumentException e) {
+                errorMessages.add(String.format("Invalid status value: %s", status));
+            }
+        } else {
+            errorMessages.add("Status is required");
         }
         showtime.setStatus(showtimeStatus);
 
