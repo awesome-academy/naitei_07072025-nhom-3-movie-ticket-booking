@@ -3,6 +3,9 @@ package com.naitei.group3.movie_ticket_booking_system.entity;
 import com.naitei.group3.movie_ticket_booking_system.enums.RatingStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "ratings")
@@ -34,4 +37,8 @@ public class Rating {
     @Enumerated(EnumType.STRING)  // Lưu enum dạng chuỗi: PENDING, APPROVED, REJECTED
     @Column(nullable = false)
     private RatingStatus status;
+
+    @CreatedDate
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 }

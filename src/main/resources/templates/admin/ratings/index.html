@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{_layouts/admin_layout :: layout(#{rating.list.title}, ~{::content})}">
+
+<div th:fragment="content">
+
+    <!-- filter pending/approved/rejected -->
+    <form method="get" th:action="@{/admin/ratings}" class="mb-4">
+        <div class="form-row">
+            <div class="col-md-3 mb-2">
+                <select class="form-control" name="status">
+                    <option th:each="s : ${allStatuses}"
+                            th:value="${s}"
+                            th:text="${#messages.msg('rating.status.' + s)}"
+                            th:selected="${s.toString() == status}"></option>
+                </select>
+            </div>
+            <div class="col-md-2 mb-2">
+                <button type="submit" class="btn btn-primary" th:text="#{rating.filter}"></button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Ratings table -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="thead-light">
+                    <tr>
+                        <th th:text="#{rating.user}"></th>
+                        <th th:text="#{rating.movie}"></th>
+                        <th th:text="#{rating.stars}"></th>
+                        <th th:text="#{rating.comment}"></th>
+                        <th th:text="#{rating.createdAt}"></th>
+                        <th th:text="#{rating.action}"></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="r : ${ratings}">
+                        <td th:text="${r.userName}"></td>
+                        <td th:text="${r.movieTitle}"></td>
+                        <td>
+                            <span th:text="${r.stars}"></span> ★
+                        </td>
+                        <td th:text="${r.comment}"></td>
+                        <td th:text="${#temporals.format(r.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td>
+                            <div th:if="${r.status == T(com.naitei.group3.movie_ticket_booking_system.enums.RatingStatus).PENDING}">
+                                <a th:href="@{/admin/ratings/approve(userId=${r.userId}, movieId=${r.movieId})}"
+                                   class="btn btn-success btn-sm mr-1">
+                                    <i class="fa fa-check"></i> <span th:text="#{rating.approve}"></span>
+                                </a>
+                                <a th:href="@{/admin/ratings/reject(userId=${r.userId}, movieId=${r.movieId})}"
+                                   class="btn btn-danger btn-sm">
+                                    <i class="fa fa-times"></i> <span th:text="#{rating.reject}"></span>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- No ratings -->
+            <div class="alert alert-light text-center border" th:if="${#lists.isEmpty(ratings)}"
+                 th:text="#{rating.noresult}">
+            </div>
+        </div>
+    </div>
+
+</div>
+</html>
