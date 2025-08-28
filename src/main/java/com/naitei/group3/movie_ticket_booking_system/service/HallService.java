@@ -9,4 +9,5 @@ public interface HallService {
 
     List<Hall> getHallsByCinemaId(Long id);
     void addHallWithSeats(HallRequestDTO request);
+    Hall getHallById(Long hallId);
 }

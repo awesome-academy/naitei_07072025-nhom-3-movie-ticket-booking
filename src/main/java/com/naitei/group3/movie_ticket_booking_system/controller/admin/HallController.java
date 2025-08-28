@@ -2,6 +2,7 @@ package com.naitei.group3.movie_ticket_booking_system.controller.admin;
 
 import com.naitei.group3.movie_ticket_booking_system.dto.request.HallRequestDTO;
 import com.naitei.group3.movie_ticket_booking_system.dto.response.SeatDTO;
+import com.naitei.group3.movie_ticket_booking_system.entity.Hall;
 import com.naitei.group3.movie_ticket_booking_system.service.CinemaService;
 import com.naitei.group3.movie_ticket_booking_system.service.HallService;
 import com.naitei.group3.movie_ticket_booking_system.service.SeatService;
@@ -47,10 +48,13 @@ public class HallController extends BaseAdminController {
         // Total seats
         long totalSeats = seatCount.values().stream().mapToLong(Long::longValue).sum();
 
+        Hall hall = hallService.getHallById(hallId);
+
         model.addAttribute("groupedSeats", groupedSeats);
         model.addAttribute("cinemaId", cinemaId);
         model.addAttribute("seatCount", seatCount);
         model.addAttribute("totalSeats", totalSeats);
+        model.addAttribute("hall", hall);
 
         return getAdminView("cinemas/halls/index");
     }
