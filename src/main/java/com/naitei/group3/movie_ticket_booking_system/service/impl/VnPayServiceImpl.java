@@ -11,9 +11,11 @@ import com.naitei.group3.movie_ticket_booking_system.exception.PaymentFailedExce
 import com.naitei.group3.movie_ticket_booking_system.exception.ResourceNotFoundException;
 import com.naitei.group3.movie_ticket_booking_system.repository.BookingRepository;
 import com.naitei.group3.movie_ticket_booking_system.repository.PaymentTransactionRepository;
+import com.naitei.group3.movie_ticket_booking_system.service.EmailService;
 import com.naitei.group3.movie_ticket_booking_system.service.PaymentGateway;
 import com.naitei.group3.movie_ticket_booking_system.utils.VnPayUtils;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -42,6 +44,9 @@ public class VnPayServiceImpl implements PaymentGateway {
 
     @Autowired
     private PaymentTransactionRepository paymentTransactionRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public PaymentResponseDTO createPayment(Long bookingId) {
@@ -84,6 +89,7 @@ public class VnPayServiceImpl implements PaymentGateway {
     }
 
     @Override
+    @Transactional
     public PaymentResultDTO handleIpn(HttpServletRequest request) {
         Map<String, String> fields = extractFields(request);
         String vnpSecureHash = request.getParameter("vnp_SecureHash");
@@ -112,6 +118,8 @@ public class VnPayServiceImpl implements PaymentGateway {
             booking.setStatus(1); // 1 = Paid
             paymentTransactionRepository.save(transaction);
             bookingRepository.save(booking);
+
+            emailService.sendBookingConfirmationEmail(booking);
 
             builder.message("Payment success (IPN)").status("OK");
         } else {

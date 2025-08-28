@@ -1,5 +1,6 @@
 package com.naitei.group3.movie_ticket_booking_system.service.impl;
 
+import com.naitei.group3.movie_ticket_booking_system.entity.*;
 import com.naitei.group3.movie_ticket_booking_system.exception.EmailSendException;
 import com.naitei.group3.movie_ticket_booking_system.service.EmailService;
 import com.naitei.group3.movie_ticket_booking_system.utils.MessageUtil;
@@ -15,7 +16,10 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.io.File;
+import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,6 +52,36 @@ public class EmailServiceImpl implements EmailService {
                 to,
                 messageUtil.getMessage("email.change.password.subject"),
                 "email/reset-password-email",
+                context
+        );
+    }
+
+    @Override
+    public void sendBookingConfirmationEmail(Booking booking) {
+        User user = booking.getUser();
+        Showtime showtime = booking.getShowtime();
+        Hall hall = showtime.getHall();
+        Cinema cinema = hall.getCinema();
+
+        Set<String> seatCodes = booking.getBookingSeats().stream()
+                .map(bs -> bs.getSeat().getSeatColumn())
+                .collect(Collectors.toSet());
+
+        Context context = new Context();
+        context.setVariable("USER_EMAIL", user.getEmail());
+        context.setVariable("BOOKING_ID", booking.getId());
+        context.setVariable("MOVIE_TITLE", showtime.getMovie().getName());
+        context.setVariable("CINEMA_NAME", cinema.getName());
+        context.setVariable("CINEMA_ADDRESS", cinema.getAddress());
+        context.setVariable("HALL_NAME", hall.getName());
+        context.setVariable("SHOWTIME_START", showtime.getStartTime().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+        context.setVariable("SEATS", String.join(", ", seatCodes));
+        context.setVariable("TOTAL_PRICE", booking.getTotalPrice());
+
+        sendEmail(
+                user.getEmail(),
+                messageUtil.getMessage("email.booking.confirm.subject"),
+                "email/booking-confirmation",
                 context
         );
     }

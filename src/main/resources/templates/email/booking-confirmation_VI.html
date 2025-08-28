@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xác nhận Đặt Vé</title>
+</head>
+<body style="margin:0; padding:0; background:#f4f6fb; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;">
+<div style="padding:40px 20px;">
+    <div style="max-width:750px; margin:0 auto; background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 15px 40px rgba(0,0,0,0.1);">
+
+        <!-- Header -->
+        <div style="background:linear-gradient(135deg,#ff6a00,#ee0979); padding:30px; text-align:center;">
+            <div style="width:64px; height:64px; background:#fff; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; margin-bottom:15px;">
+                <table width="100%" cellpadding="0" cellspacing="0">
+                    <tr>
+                        <td align="center">
+                            <img src="cid:logoImage" alt="Logo" width="40" height="40" style="display:block;">
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <h1 style="color:#fff; font-size:24px; font-weight:700; margin:0;">
+                Movie Ticket Booking
+            </h1>
+            <p style="color:rgba(255,255,255,0.9); font-size:15px; margin:8px 0 0 0;">
+                Xác nhận đặt vé thành công
+            </p>
+        </div>
+
+        <!-- Main Content -->
+        <div style="padding:35px 57px;">
+            <h2 style="color:#2c3e50; font-size:22px; font-weight:600; margin:0 0 15px 0; text-align:center;">
+                Cảm ơn bạn đã đặt vé thành công!
+            </h2>
+            <p style="color:#555; font-size:15px; line-height:1.6; text-align:center; margin:0 0 25px 0;">
+                Mã booking của bạn: <strong>#<span th:text="${BOOKING_ID}"></span></strong>.<br>
+                Thông tin chi tiết vé đã được xác nhận như sau:
+            </p>
+
+            <!-- Booking Info -->
+            <table style="width:100%; border-collapse:collapse; margin:0 0 25px 0; font-size:15px;">
+                <tr>
+                    <td style="padding:8px 0; color:#2c3e50; font-weight:600;">🎬 Phim</td>
+                    <td style="padding:8px 0; color:#555;" th:text="${MOVIE_TITLE}"></td>
+                </tr>
+                <tr>
+                    <td style="padding:8px 0; color:#2c3e50; font-weight:600;">📍 Rạp</td>
+                    <td style="padding:8px 0; color:#555;">
+                        <span th:text="${CINEMA_NAME}"></span> - <span th:text="${CINEMA_ADDRESS}"></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="padding:8px 0; color:#2c3e50; font-weight:600;">🏢 Phòng chiếu</td>
+                    <td style="padding:8px 0; color:#555;" th:text="${HALL_NAME}"></td>
+                </tr>
+                <tr>
+                    <td style="padding:8px 0; color:#2c3e50; font-weight:600;">🕒 Suất chiếu</td>
+                    <td style="padding:8px 0; color:#555;" th:text="${SHOWTIME_START}"></td>
+                </tr>
+                <tr>
+                    <td style="padding:8px 0; color:#2c3e50; font-weight:600;">💺 Ghế</td>
+                    <td style="padding:8px 0; color:#555;" th:text="${SEATS}"></td>
+                </tr>
+                <tr>
+                    <td style="padding:8px 0; color:#2c3e50; font-weight:600;">💰 Tổng tiền</td>
+                    <td style="padding:8px 0; color:#e74c3c; font-weight:600;" th:text="${TOTAL_PRICE} + ' VNĐ'"></td>
+                </tr>
+            </table>
+
+            <p style="color:#555; font-size:15px; text-align:center; margin:20px 0 0 0;">
+                Chúc bạn có trải nghiệm xem phim tuyệt vời! 🍿
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <div style="background:#f9fbff; padding:25px; text-align:center; border-top:1px solid #e6ebf5;">
+            <p style="color:#7f8c8d; font-size:14px; margin:0 0 15px 0; line-height:1.5;">
+                Nếu cần hỗ trợ, vui lòng liên hệ đội ngũ Movie Ticket Booking.<br>
+                Chúng tôi luôn sẵn sàng giúp bạn có trải nghiệm tốt nhất!
+            </p>
+            <p style="color:#a0a0a0; font-size:12px; margin:0; line-height:1.4;">
+                &copy; 2025 <strong>Movie Ticket Booking</strong><br>
+                Email này được gửi đến <span style="color:#4268D6;" th:text="${USER_EMAIL}"></span>
+            </p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
