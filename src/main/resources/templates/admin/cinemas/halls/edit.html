@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{_layouts/admin_layout :: layout(#{hall.edit}, ~{::content})}">
+
+<div th:fragment="content">
+
+    <form th:action="@{'/admin/cinemas/' + ${cinemaId} + '/halls/' + ${hall.id}}"
+          method="post">
+        <input type="hidden" name="_method" value="put"/>
+
+        <div class="form-group">
+            <label for="hallName" th:text="#{hall.name}"></label>
+            <input type="text" id="hallName" name="newName"
+                   th:value="${hall.name}" class="form-control" required/>
+        </div>
+
+        <button type="submit" class="btn btn-primary" th:text="#{button.save}"></button>
+        <a th:href="@{'/admin/cinemas/' + ${cinemaId} + '/halls/' + ${hall.id}}"
+           class="btn btn-secondary" th:text="#{button.cancel}"></a>
+    </form>
+
+</div>
+
+</html>

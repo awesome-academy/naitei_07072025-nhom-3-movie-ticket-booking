@@ -4,6 +4,26 @@
 
 <div th:fragment="content">
 
+    <h2 th:text="${hall.name}"></h2>
+
+
+    <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+        <span th:text="${errorMessage}"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div th:if="${successMessage}"
+         class="alert alert-success alert-dismissible fade show"
+         role="alert">
+        <span th:text="#{${successMessage}}"></span>
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+
     <!-- Thêm ghế từ excel or Xóa phòng -->
     <div class="hall-actions">
         <a th:href="@{'/admin/cinemas/{cinema.id}/halls/{hall.id}' + '/upload'}"
@@ -11,6 +31,11 @@
            th:text="#{button.addSeatsFromExcel}"></a>
 
         <!-- edit -->
+        <a th:href="@{'/admin/cinemas/' + ${cinemaId} + '/halls/' + ${hall.id} + '/edit'}"
+           class="btn btn-primary btn-sm mr-2"
+           th:text="#{button.edit}"></a>
+
+<!--        delete-->
         <a th:href="@{'/admin/cinemas/{cinema.id}/halls/{hall.id}' + '/delete'}"
            class="btn btn-outline-secondary btn-sm mr-2"
            th:text="#{button.delete}"></a>
