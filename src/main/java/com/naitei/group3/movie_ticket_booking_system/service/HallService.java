@@ -9,4 +9,6 @@ public interface HallService {
 
     List<Hall> getHallsByCinemaId(Long id);
     void addHallWithSeats(HallRequestDTO request);
+    Hall getHallById(Long hallId);
+    Hall updateHallName(Long hallId, String newName);
 }
