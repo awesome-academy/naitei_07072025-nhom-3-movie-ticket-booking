@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{_layouts/admin_layout :: layout(#{cinema.detail.title(${cinema.name})}, ~{::content})}">
+
+<div th:fragment="content">
+  <div class="row">
+
+    <!-- Thông tin rạp -->
+    <div class="col-md-8">
+      <h2 th:text="${cinema.name}"></h2>
+      <p>
+        <strong th:text="#{cinema.address}"></strong>:
+        <span th:text="${cinema.address}"></span>
+      </p>
+      <p>
+        <strong th:text="#{cinema.city}"></strong>:
+        <span th:text="${cinema.city}"></span>
+      </p>
+      <p>
+        <strong th:text="#{cinema.map}"></strong>:
+        <a th:href="${cinema.mapUrl}" target="_blank" th:text="#{cinema.viewMap}"></a>
+      </p>
+
+      <button class="btn btn-danger btn-sm"
+              th:onclick="|deleteCinema(${cinema.id})|"
+              th:text="#{cinema.delete}">
+      </button>
+
+      <a th:href="@{/admin/cinemas}" class="btn btn-secondary ml-2" th:text="#{cinema.back}"></a>
+    </div>
+
+  </div>
+
+  <script th:inline="javascript">
+    const i18n = {
+        confirmDelete: [[#{confirm.delete}]],
+        successDelete: [[#{success.delete}]],
+        errorDelete: [[#{error.delete('')}]],
+        errorNetwork: [[#{error.network('')}]]
+    };
+  </script>
+  <div th:fragment="scripts">
+    <script th:src="@{/js/deleteCinema.js}"></script>
+  </div>
+</div>
+</html>

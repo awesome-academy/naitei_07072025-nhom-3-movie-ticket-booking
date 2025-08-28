@@ -29,7 +29,7 @@
                    th:text="#{button.edit}"></a>
 
                 <!-- delete -->
-                <a th:href="@{'/admin/cinemas/' + ${cinema.id} + 'delete'}"
+                <a th:href="@{'/admin/cinemas/' + ${cinema.id} + '/delete'}"
                    class="btn btn-outline-danger btn-sm"
                    th:onclick="'return confirm(\'' + #{cinema.delete.confirm} + '\')'"
                    th:text="#{button.delete}"></a>

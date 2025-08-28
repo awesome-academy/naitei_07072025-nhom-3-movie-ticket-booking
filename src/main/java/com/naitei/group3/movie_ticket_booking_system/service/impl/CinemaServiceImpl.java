@@ -2,25 +2,32 @@ package com.naitei.group3.movie_ticket_booking_system.service.impl;
 
 import com.naitei.group3.movie_ticket_booking_system.converter.DtoConverter;
 import com.naitei.group3.movie_ticket_booking_system.dto.response.CinemaDTO;
+import com.naitei.group3.movie_ticket_booking_system.entity.Cinema;
 import com.naitei.group3.movie_ticket_booking_system.enums.ShowtimeStatus;
 import com.naitei.group3.movie_ticket_booking_system.exception.ResourceNotFoundException;
 import com.naitei.group3.movie_ticket_booking_system.repository.CinemaRepository;
 import com.naitei.group3.movie_ticket_booking_system.repository.MovieRepository;
 import com.naitei.group3.movie_ticket_booking_system.service.CinemaService;
+import jakarta.mail.Message;
+import java.time.LocalDateTime;
+import java.util.Locale;
 import com.naitei.group3.movie_ticket_booking_system.service.MovieService;
 import com.naitei.group3.movie_ticket_booking_system.utils.MessageUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class CinemaServiceImpl implements CinemaService {
 
     private final CinemaRepository cinemaRepository;
+    private final MessageSource messageSource;
     private final MessageUtil messageUtil;
     private final MovieService movieService;
 
@@ -50,5 +57,23 @@ public class CinemaServiceImpl implements CinemaService {
         }
         return cinemaRepository.findDistinctByHalls_Showtimes_MovieIdAndHalls_Showtimes_Status(movieId, ShowtimeStatus.AVAILABLE, pageable)
                 .map(DtoConverter::convertCinemaToDTO);
+    }
+
+    @Override
+    @Transactional
+    public void deleteCinema(Long id) {
+        Cinema cinema = cinemaRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException(
+                messageSource.getMessage("error.cinema.notfound", null, Locale.getDefault())
+            ));
+
+        if (cinema.getHalls() != null && !cinema.getHalls().isEmpty()) {
+            // Nếu có Hall thì soft delete
+            cinema.setDeletedAt(LocalDateTime.now());
+            cinemaRepository.save(cinema);
+        } else {
+            // Nếu không có Hall thì hard delete
+            cinemaRepository.delete(cinema);
+        }
     }
 }

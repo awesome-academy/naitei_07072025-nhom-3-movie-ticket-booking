@@ -77,7 +77,7 @@
                         <!-- Sửa hoặc xóa rạp -->
                         <a th:href="@{'/admim/cinemas/' + ${c.id} + '/edit'}"
                             class="btn btn-outline-secondary btn-sm mr-2" th:text="#{cinema.edit}">Sửa</a>
-                        <a th:href="@{'admin/cinemas/' + ${c.id} + '/delete'}" class="btn btn-outline-danger btn-sm"
+                        <a th:href="@{'/admin/cinemas/' + ${c.id} + '/delete'}" class="btn btn-outline-danger btn-sm"
                             th:text="#{cinema.delete}">Xoá</a>
                     </div>
                 </div>
