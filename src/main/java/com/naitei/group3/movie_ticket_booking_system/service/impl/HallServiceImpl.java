@@ -48,5 +48,16 @@ public class HallServiceImpl implements HallService {
         hallRepository.save(hall);
     }
 
-
+    @Override
+    public Hall getHallById(Long hallId) {
+        return hallRepository.findById(hallId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                                messageSource.getMessage(
+                                        "hall.notfound",
+                                        new Object[]{hallId},
+                                        LocaleContextHolder.getLocale()
+                                )
+                        )
+                );
+    }
 }
