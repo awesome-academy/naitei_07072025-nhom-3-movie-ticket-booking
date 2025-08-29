@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{_layouts/admin_layout :: layout(#{seat.edit}, ~{::content})}">
+
+<div th:fragment="content">
+
+    <form th:action="@{'/admin/cinemas/' + ${cinemaId} + '/halls/' + ${hallId} + '/seats/' + ${seat.id}}"
+          method="post">
+        <input type="hidden" name="_method" value="put"/>
+
+        <!-- Hàng và cột ghế (readonly) -->
+        <div class="form-group mb-3">
+            <label>Hàng ghế</label>
+            <input type="text" th:value="${seat.seatRow}" class="form-control" readonly/>
+        </div>
+
+        <div class="form-group mb-3">
+            <label>Cột ghế</label>
+            <input type="text" th:value="${#strings.substring(seat.seatColumn,1)}" class="form-control" readonly/>
+        </div>
+
+        <!-- Loại ghế -->
+        <div class="form-group mb-3">
+            <label th:text="#{seat.type}">Loại ghế</label>
+            <select name="seatTypeId" class="form-control" required>
+                <option th:each="type : ${seatTypes}"
+                        th:value="${type.id}"
+                        th:text="${type.name}"
+                        th:selected="${type.id == seat.seatType.id}">
+                </option>
+            </select>
+        </div>
+
+        <!-- Nút -->
+        <button type="submit" class="btn btn-success" th:text="#{button.update}">Cập nhật</button>
+        <a th:href="@{'/admin/cinemas/' + ${cinemaId} + '/halls/' + ${hallId}}"
+           class="btn btn-secondary" th:text="#{button.cancel}">Hủy</a>
+    </form>
+
+</div>
+</html>
