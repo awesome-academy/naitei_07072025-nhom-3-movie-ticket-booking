@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{_layouts/admin_layout :: layout(#{cinema.edit.title}, ~{::content})}">
+
+<div th:fragment="content">
+
+  <form th:action="@{'/admin/cinemas/' + ${cinema.id}}"
+        th:object="${cinema}" method="post">
+
+    <input type="hidden" name="_method" value="put"/>
+
+    <!-- Name -->
+    <div class="form-group">
+      <label for="name" th:text="#{cinema.name}">Tên rạp</label>
+      <input type="text" id="name" th:field="*{name}" class="form-control" required>
+    </div>
+
+    <!-- Address -->
+    <div class="form-group">
+      <label for="address" th:text="#{cinema.address}">Địa chỉ</label>
+      <input type="text" id="address" th:field="*{address}" class="form-control" required>
+    </div>
+
+    <!-- City -->
+    <div class="form-group">
+      <label for="city" th:text="#{cinema.city}">Thành phố</label>
+      <input type="text" id="city" th:field="*{city}" class="form-control" required>
+    </div>
+
+    <!-- Map URL -->
+    <div class="form-group">
+      <label for="mapUrl" th:text="#{cinema.map.link}">Link bản đồ</label>
+      <input type="url" id="mapUrl" th:field="*{mapUrl}" class="form-control">
+      <small class="form-text text-muted" th:text="#{cinema.map.hint}">
+        Dán link Google Map của rạp (nếu có).
+      </small>
+    </div>
+
+    <!-- Buttons -->
+    <div class="d-flex mt-4">
+      <button type="submit" class="btn btn-primary mr-2" th:text="#{cinema.save}">Lưu</button>
+      <a th:href="@{/admin/cinemas}" class="btn btn-secondary" th:text="#{cinema.back}">Quay lại</a>
+    </div>
+  </form>
+
+</div>
+</html>

@@ -8,8 +8,10 @@ import com.naitei.group3.movie_ticket_booking_system.dto.response.MovieDTO;
 import com.naitei.group3.movie_ticket_booking_system.dto.response.SeatDTO;
 import com.naitei.group3.movie_ticket_booking_system.dto.response.ShowtimeDTO;
 import com.naitei.group3.movie_ticket_booking_system.entity.*;
+import com.naitei.group3.movie_ticket_booking_system.dto.response.SimpleShowtimeDTO;
 import com.naitei.group3.movie_ticket_booking_system.enums.PaymentStatus;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class DtoConverter {
@@ -111,8 +113,8 @@ public class DtoConverter {
                                 .build();
         }
 
-       
-    
+
+
 
     public static Hall convertToHall(HallRequestDTO request, Cinema cinema) {
         return Hall.builder()

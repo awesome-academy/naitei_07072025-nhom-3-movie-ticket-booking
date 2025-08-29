@@ -1,6 +1,7 @@
 package com.naitei.group3.movie_ticket_booking_system.service.impl;
 
 import com.naitei.group3.movie_ticket_booking_system.converter.DtoConverter;
+import com.naitei.group3.movie_ticket_booking_system.converter.RequestMapper;
 import com.naitei.group3.movie_ticket_booking_system.dto.response.CinemaDTO;
 import com.naitei.group3.movie_ticket_booking_system.entity.Cinema;
 import com.naitei.group3.movie_ticket_booking_system.enums.ShowtimeStatus;
@@ -8,9 +9,10 @@ import com.naitei.group3.movie_ticket_booking_system.exception.ResourceNotFoundE
 import com.naitei.group3.movie_ticket_booking_system.repository.CinemaRepository;
 import com.naitei.group3.movie_ticket_booking_system.repository.MovieRepository;
 import com.naitei.group3.movie_ticket_booking_system.service.CinemaService;
+import jakarta.transaction.Transactional;
+import java.util.Locale;
 import jakarta.mail.Message;
 import java.time.LocalDateTime;
-import java.util.Locale;
 import com.naitei.group3.movie_ticket_booking_system.service.MovieService;
 import com.naitei.group3.movie_ticket_booking_system.utils.MessageUtil;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +22,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -75,5 +76,19 @@ public class CinemaServiceImpl implements CinemaService {
             // Nếu không có Hall thì hard delete
             cinemaRepository.delete(cinema);
         }
+    }
+
+    @Override
+    @Transactional
+    public CinemaDTO updateCinema(Long id, CinemaDTO request) {
+        Cinema cinema = cinemaRepository.findById(id)
+            .orElseThrow(() -> new ResourceNotFoundException(
+                messageSource.getMessage("error.cinema.notfound", null, Locale.getDefault())
+            ));
+
+        RequestMapper.updateCinemaEntity(cinema, request);
+
+        Cinema saved = cinemaRepository.save(cinema);
+        return DtoConverter.convertCinemaToDTO(saved);
     }
 }
