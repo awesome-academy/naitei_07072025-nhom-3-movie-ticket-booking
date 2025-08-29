@@ -1,5 +1,6 @@
 package com.naitei.group3.movie_ticket_booking_system.repository;
 
+import com.naitei.group3.movie_ticket_booking_system.entity.Cinema;
 import com.naitei.group3.movie_ticket_booking_system.entity.Showtime;
 import com.naitei.group3.movie_ticket_booking_system.enums.ShowtimeStatus;
 import org.springframework.data.domain.Page;
@@ -9,6 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.time.LocalDateTime;
 
 public interface ShowtimeRepository extends JpaRepository<Showtime, Long> {
 
@@ -36,4 +39,6 @@ public interface ShowtimeRepository extends JpaRepository<Showtime, Long> {
                 ShowtimeStatus status,
                 Pageable pageable
         );
+        List<Showtime> findByHall_CinemaAndStartTimeAfter(Cinema cinema, LocalDateTime now);
+
 }
