@@ -13,4 +13,5 @@ public interface RatingService {
     List<RatingResponse> getRatingsByMovie(Long movieId);
     List<RatingResponse> getRatingsByUser(Long userId);
     List<RatingDTO> getRatingsByStatus(RatingStatus status);
+    RatingDTO updateStatus(Long userId, Long movieId, RatingStatus newStatus);
 }

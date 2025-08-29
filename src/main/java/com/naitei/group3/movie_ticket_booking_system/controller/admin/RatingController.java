@@ -6,9 +6,7 @@ import com.naitei.group3.movie_ticket_booking_system.service.RatingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -36,5 +34,17 @@ public class RatingController extends BaseAdminController{
         model.addAttribute("allStatuses", allStatuses);
 
         return getAdminView("ratings/index");
+    }
+
+    @PostMapping("/approve/{userId}/{movieId}")
+    public String approve(@PathVariable Long userId, @PathVariable Long movieId) {
+        ratingService.updateStatus(userId, movieId, RatingStatus.APPROVED);
+        return "redirect:/admin/ratings?status=PENDING";
+    }
+
+    @PostMapping("/reject/{userId}/{movieId}")
+    public String reject(@PathVariable Long userId, @PathVariable Long movieId) {
+        ratingService.updateStatus(userId, movieId, RatingStatus.REJECTED);
+        return "redirect:/admin/ratings?status=PENDING";
     }
 }

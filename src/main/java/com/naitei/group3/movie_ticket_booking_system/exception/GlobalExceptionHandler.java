@@ -224,6 +224,24 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(RatingNotFoundException.class)
+    public Object handleRatingNotFound(RatingNotFoundException ex, HttpServletRequest request) {
+        if (isApiRequest(request)) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(buildErrorResponse(HttpStatus.NOT_FOUND,
+                            ex.getMessage() != null ? ex.getMessage()
+                                    : getMessage("rating.notfound", null)));
+        }
+        return buildErrorPage(
+                404,
+                getMessage("error.notfound.title", null),
+                ex.getMessage() != null ? ex.getMessage()
+                        : getMessage("rating.notfound", null),
+                "/admin",
+                getMessage("button.back.home", null)
+        );
+    }
+
     @ExceptionHandler(EmailSendException.class)
     public ResponseEntity<BaseApiResponse<String>> handleEmailSendException(IllegalArgumentException ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
