@@ -4,6 +4,10 @@ import com.naitei.group3.movie_ticket_booking_system.dto.request.ChangePasswordR
 import com.naitei.group3.movie_ticket_booking_system.dto.response.BaseApiResponse;
 import com.naitei.group3.movie_ticket_booking_system.security.CustomUserPrincipal;
 import com.naitei.group3.movie_ticket_booking_system.service.PasswordService;
+import com.naitei.group3.movie_ticket_booking_system.dto.request.UserUpdateRequest;
+import com.naitei.group3.movie_ticket_booking_system.dto.response.UserDTO;
+import com.naitei.group3.movie_ticket_booking_system.entity.User;
+import com.naitei.group3.movie_ticket_booking_system.security.CustomUserPrincipal;
 import com.naitei.group3.movie_ticket_booking_system.service.UserService;
 import com.naitei.group3.movie_ticket_booking_system.utils.MessageUtil;
 import jakarta.validation.Valid;
@@ -34,5 +38,20 @@ public class UserController {
                         messageUtil.getMessage("email.change.password.success")
                 )
         );
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserDTO> getCurrentUser(@AuthenticationPrincipal CustomUserPrincipal principal) {
+        User user = userService.getProfile(principal.getId());
+        return ResponseEntity.ok(UserDTO.fromEntity(user));
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<UserDTO> updateProfile(
+            @AuthenticationPrincipal CustomUserPrincipal principal,
+            @Valid @RequestBody UserUpdateRequest req
+    ) {
+        User updated = userService.updateProfile(principal.getId(), req);
+        return ResponseEntity.ok(UserDTO.fromEntity(updated));
     }
 }
