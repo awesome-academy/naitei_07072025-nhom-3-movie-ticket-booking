@@ -10,7 +10,11 @@ import com.naitei.group3.movie_ticket_booking_system.exception.ResourceNotFoundE
 import com.naitei.group3.movie_ticket_booking_system.repository.HallRepository;
 import com.naitei.group3.movie_ticket_booking_system.repository.SeatRepository;
 import com.naitei.group3.movie_ticket_booking_system.repository.SeatTypeRepository;
+import com.naitei.group3.movie_ticket_booking_system.enums.BookingStatus;
+import com.naitei.group3.movie_ticket_booking_system.repository.BookingSeatRepository;
+import com.naitei.group3.movie_ticket_booking_system.repository.ShowtimeRepository;
 import com.naitei.group3.movie_ticket_booking_system.service.SeatService;
+import com.naitei.group3.movie_ticket_booking_system.utils.MessageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -28,6 +32,33 @@ public class SeatServiceImpl implements SeatService {
     private final SeatTypeRepository seatTypeRepository;
     private final HallRepository hallRepository;
     private final MessageSource messageSource;
+    private final BookingSeatRepository bookingSeatRepository;
+    private final ShowtimeRepository showtimeRepository;
+    private final MessageUtil  messageUtil;
+
+    @Override
+    public List<SeatDTO> getSeatsByShowtimeId(Long showtimeId) {
+
+        boolean exists = showtimeRepository.existsById(showtimeId);
+        if (!exists) {
+            throw new ResourceNotFoundException(messageUtil.getMessage("error.showtime.notfound.2"));
+        }
+
+        List<Seat> seats = seatRepository.findSeatsByShowtimeId(showtimeId);
+        List<Long> seatIds = seats.stream().map(Seat::getId).toList();
+
+        List<Integer> statuses = List.of(
+            BookingStatus.PENDING.getValue(),
+            BookingStatus.PAID.getValue()
+        );
+
+        List<Long> bookedSeatIds = bookingSeatRepository.findBookedOrHeldSeatIds(showtimeId, seatIds, statuses);
+        Set<Long> bookedSet = new HashSet<>(bookedSeatIds);
+
+        return seats.stream()
+                .map(seat -> DtoConverter.convertSeatToDTO(seat, !bookedSet.contains(seat.getId())))
+                .toList();
+    }
 
     @Override
     public Map<String, List<SeatDTO>> getSeatsByHallId(Long id) {

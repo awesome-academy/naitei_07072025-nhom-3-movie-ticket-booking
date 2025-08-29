@@ -118,10 +118,21 @@ public class DtoConverter {
 
     public static Hall convertToHall(HallRequestDTO request, Cinema cinema) {
         return Hall.builder()
-            .name(request.getHallName())
-            .totalSeats(request.getTotalSeats())
-            .cinema(cinema)
-            .build();
+                .name(request.getHallName())
+                .totalSeats(request.getTotalSeats())
+                .cinema(cinema)
+                .build();
+    }
+
+    public static SeatDTO convertSeatToDTO(Seat seat, boolean booked) {
+        if (seat == null) return null;
+        return SeatDTO.builder()
+                .id(seat.getId())
+                .seatRow(seat.getSeatRow())
+                .seatColumn(seat.getSeatColumn())
+                .seatTypeName(seat.getSeatType().getName())
+                .status(booked)
+                .build();
     }
 
     public static RatingDTO covertRatingToDTO(Rating rating) {
